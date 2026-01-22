@@ -1,31 +1,31 @@
 package ec.edu.epn.mypolidomus.DataAccess.DTOs; 
 
 public class PolidomusDTO {
-    private Integer IdAntCiberDron;
+    private Integer IdPolidomus;
     private String Serie;
     private String Estado;
     private String FechaCreacion;
     private String FechaModifica;
     
     public PolidomusDTO(String serie) {
-        IdAntCiberDron =0;
+        IdPolidomus =0;
         Serie = serie;
     }
     public PolidomusDTO(){
     }
-    public PolidomusDTO(Integer idAntCiberDron, String serie, String estado, String fechaCreacion,
+    public PolidomusDTO(Integer idPolidomus, String serie, String estado, String fechaCreacion,
             String fechaModifica) {
-        IdAntCiberDron = idAntCiberDron;
+        IdPolidomus = idPolidomus;
         Serie = serie;
         Estado = estado;
         FechaCreacion = fechaCreacion;
         FechaModifica = fechaModifica;
     }
-    public Integer getIdAntCiberDron() {
-        return IdAntCiberDron;
+    public Integer getIdPolidomus() {
+        return IdPolidomus;
     }
-    public void setIdAntCiberDron(Integer idAntCiberDron) {
-        IdAntCiberDron = idAntCiberDron;
+    public void setIdPolidomus(Integer idPolidomus) {
+        IdPolidomus = idPolidomus;
     }
     public String getSerie() {
         return Serie;
@@ -54,7 +54,7 @@ public class PolidomusDTO {
     @Override
     public String toString() {
         return getClass().getName()
-        + "\n IdAntCiberDron : "+ getIdAntCiberDron  ()
+        + "\n IdPolidomus : "+ getIdPolidomus  ()
         + "\n Serie        : "+ getSerie        ()
         + "\n Estado        : "+ getEstado          ()
         + "\n FechaCreacion : "+ getFechaCreacion   ()
