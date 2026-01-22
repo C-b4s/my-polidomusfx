@@ -1,14 +1,14 @@
--- database: ../Databases/antCiberDron.sqlite
+-- database: ../Databases/Polidomus.sqlite
 
-DROP TABLE IF EXISTS AntCiberDron;
+DROP TABLE IF EXISTS Polidomus;
 DROP TABLE IF EXISTS Hormiga;
 DROP TABLE IF EXISTS Sexo;
 DROP TABLE IF EXISTS Estado;
 DROP TABLE IF EXISTS HormigaTipo;
-DROP TABLE IF EXISTS AlimentoTipo; 
+DROP TABLE IF EXISTS UsuarioTipo; 
  
-CREATE TABLE AlimentoTipo(
-     IdAlimentoTipo INTEGER PRIMARY KEY AUTOINCREMENT
+CREATE TABLE UsuarioTipo(
+     IdUsuarioTipo INTEGER PRIMARY KEY AUTOINCREMENT
     ,Nombre         VARCHAR(15)  NOT NULL UNIQUE
     ,Descripcion    VARCHAR(100) NULL
     ,Estado         VARCHAR(1)  NOT NULL DEFAULT 'A'
@@ -51,8 +51,8 @@ CREATE TABLE Hormiga (
     ,FechaCreacion  DATETIME NOT NULL  DEFAULT (datetime('now','localtime'))
     ,FechaModifica  DATETIME NOT NULL  DEFAULT (datetime('now','localtime'))
 );
-CREATE TABLE AntCiberDron (
-     IdAntCiberDron     INTEGER PRIMARY KEY AUTOINCREMENT
+CREATE TABLE Polidomus (
+     IdPolidomus     INTEGER PRIMARY KEY AUTOINCREMENT
     ,Serie              VARCHAR(10) NOT NULL  UNIQUE
     ,Estado             VARCHAR(1)  NOT NULL DEFAULT 'A'
     ,FechaCreacion      DATETIME NOT NULL  DEFAULT (datetime('now','localtime'))
@@ -67,7 +67,7 @@ INSERT INTO Sexo
 ,('Hibrido',' Hibrido')
 ,('Asexual',' Asexual');
 
-INSERT INTO AlimentoTipo
+INSERT INTO UsuarioTipo
  (Nombre, Descripcion)  VALUES
  ('Carnivoro'   ,'Azucar')
 ,('Herbívoro' ,'Proteina')
@@ -78,7 +78,7 @@ INSERT INTO HormigaTipo
  (Nombre, Descripcion)  VALUES 
  ('Larva'     ,' en etapa de larva')
 ,('Soldado'   ,' encargada de la defensa')
-,('Rastreadora',' encargada de buscar alimento')
+,('Rastreadora',' encargada de buscar Usuario')
 ,('Reina'     ,' encargada de la reproducción')
 ,('Zángano'   ,' macho para reproducción');
 
@@ -88,7 +88,7 @@ INSERT INTO Estado
  ('Muere',' ha muerto'),
  ('Finge',' su muerte');
 
-INSERT INTO AntCiberDron
+INSERT INTO Polidomus
 (Serie)     VALUES 
 ('S001'),
 ('S002'),
@@ -105,7 +105,7 @@ INSERT INTO Hormiga
 select * from Sexo;
 select * from HormigaTipo;
 select * from Estado;
-select * from AlimentoTipo;
+select * from UsuarioTipo;
 SELECT * FROM Hormiga;
 
 

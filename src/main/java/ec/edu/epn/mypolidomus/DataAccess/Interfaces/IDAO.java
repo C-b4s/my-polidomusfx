@@ -1,10 +1,7 @@
-//  © 2K26 ❱──💀──❰ pat_mic ? code is life : life is code
-package DataAccess.Interfaces;
+package ec.edu.epn.mypolidomus.DataAccess.Interfaces;
 
 import java.util.List;
-
-import Infrastructure.AppException;
-
+import ec.edu.epn.mypolidomus.Infrastructure.AppException;
 public interface IDAO<T> {
     List<T> readAll()            throws AppException;
     T       readBy (Integer id)  throws AppException;

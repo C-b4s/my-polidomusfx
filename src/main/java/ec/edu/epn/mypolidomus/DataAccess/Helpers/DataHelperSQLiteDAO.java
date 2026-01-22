@@ -1,17 +1,19 @@
-package DataAccess.Helpers;
-import java.sql.*;
-import java.util.List;
-
-import DataAccess.Interfaces.IDAO;
-
+package ec.edu.epn.mypolidomus.DataAccess.Helpers;
+import ec.edu.epn.mypolidomus.DataAccess.Interfaces.IDAO;
+import ec.edu.epn.mypolidomus.Infrastructure.AppConfig;
+import ec.edu.epn.mypolidomus.Infrastructure.AppException;
 import java.util.ArrayList;
+import java.util.List;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-
-import Infrastructure.AppConfig;
-import Infrastructure.AppException;
 
 public class DataHelperSQLiteDAO <T> implements IDAO<T> {
     protected final Class<T>DTOClass;

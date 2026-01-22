@@ -1,19 +1,19 @@
-package DataAccess.DTOs;
+package ec.edu.epn.mypolidomus.DataAccess.DTOs; 
 
-public class AntCiberDronDTO {
+public class PolidomusDTO {
     private Integer IdAntCiberDron;
     private String Serie;
     private String Estado;
     private String FechaCreacion;
     private String FechaModifica;
     
-    public AntCiberDronDTO(String serie) {
+    public PolidomusDTO(String serie) {
         IdAntCiberDron =0;
         Serie = serie;
     }
-    public AntCiberDronDTO(){
+    public PolidomusDTO(){
     }
-    public AntCiberDronDTO(Integer idAntCiberDron, String serie, String estado, String fechaCreacion,
+    public PolidomusDTO(Integer idAntCiberDron, String serie, String estado, String fechaCreacion,
             String fechaModifica) {
         IdAntCiberDron = idAntCiberDron;
         Serie = serie;
