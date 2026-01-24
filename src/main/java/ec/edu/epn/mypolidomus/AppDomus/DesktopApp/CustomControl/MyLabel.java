@@ -1,29 +1,27 @@
 package ec.edu.epn.mypolidomus.AppDomus.DesktopApp.CustomControl;
 
-import java.awt.Color;
-import java.awt.Font;
-import javax.swing.JLabel;
+import ec.edu.epn.mypolidomus.Infrastructure.AppStyle;
+import javafx.geometry.Pos;
+import javafx.scene.control.Label;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 
-import Infrastructure.AppStyle;
-
-public class MyLabel extends JLabel{
+public class MyLabel extends Label{
     public MyLabel(){
-        customizeComponent();
+        customizeComponent(getText());
     }
     public MyLabel(String text){
-        setText(text);
-        customizeComponent();
+        customizeComponent(text);
     }
-    private void customizeComponent(){
-        setCustomizeComponent(getText(), AppStyle.FONT, AppStyle.COLOR_FONT_LIGHT, AppStyle.ALIGNMENT_LEFT);
+    private void customizeComponent(String text){
+        setCustomizeComponent(text, AppStyle.FONT, AppStyle.COLOR_FONT_LIGHT, AppStyle.ALIGNMENT_LEFT);
+
     }
-    public void setCustomizeComponent(String text, Font  font, Color color, int alignment) {
+    public void setCustomizeComponent(String text, Font  font, Color color, Pos alignment) {
         setText(text);
         setFont(font);
-        setOpaque(false);
+        setAlignment(alignment);
+        setTextFill(color);
         setBackground(null);
-        setForeground(color);
-        setHorizontalAlignment(alignment);
-        //setIcon(new ImageIcon(iconPath));
     }
 }
