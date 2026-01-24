@@ -1,53 +1,39 @@
 package ec.edu.epn.mypolidomus.AppDomus.DesktopApp.Forms;
 
+import ec.edu.epn.mypolidomus.AppDomus.DesktopApp.CustomControl.MyButton;
+import ec.edu.epn.mypolidomus.Infrastructure.AppMSG;
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.layout.BorderPane;
+import javafx.stage.Stage;
 
-public class AppStart extends JFrame {
-    AppMenu   pnlMenu = new AppMenu();
-    JPanel    pnlMain = new PHome();
+public class AppStart extends Application {
+    private AppMenu   pnlMenu = new AppMenu();
+    private PHome   pnlMain = new PHome();
 
-    public AppStart(String tilteApp) {
-        initComponents(tilteApp);
- 
-        PatButton btnHome   = new PatButton("🐜 Home");
-        PatButton btnSexo   = new PatButton("🐜 Sexo");
-        PatButton btnHormiga= new PatButton("🐜 Tipo de Hormiga");
-        PatButton btnTest   = new PatButton("🐜 validar");
+    @Override
+    public void start(Stage stage) throws Exception {
+        BorderPane root = new BorderPane();
+        root.setLeft(pnlMenu);
+        root.setCenter(pnlMain);
 
-        btnHome   .addActionListener(e -> setPanel(new PHome()));
-        btnSexo   .addActionListener(e -> setPanel(new PSexo()));
-        btnHormiga.addActionListener(e -> setPanel(new PHome()));
-        btnTest   .addActionListener(e -> AppMSG.showError("mensaje de error"));
+        MyButton btnCualquiera = new MyButton("aaaaa");
+        MyButton btnTest             = new MyButton("Aaaaaaaa");
 
-        pnlMenu.addMenuItem(btnHome   );
-        pnlMenu.addMenuItem(btnSexo   );    
-        pnlMenu.addMenuItem(btnHormiga);
-        pnlMenu.addMenuItem(btnTest   );
+        btnCualquiera.setOnAction(e -> setPanel(new PHome(),root));
+        btnTest.setOnAction(e -> AppMSG.showError("Mensaje de error"));
 
+        pnlMenu.addMenuItem(btnCualquiera);
+        pnlMenu.addMenuItem(btnTest);
+
+        Scene scene = new Scene(root,930,600);
+        stage.setTitle(("My PoliDomus"));
+        stage.setScene(scene);
+        stage.setResizable(false);
+        stage.show();
     }
 
-    private void setPanel(JPanel formularioPanel) {
-        Container container = getContentPane();
-        container.remove(pnlMain);
-        pnlMain = formularioPanel;
-        container.add(pnlMain, BorderLayout.CENTER);
-        revalidate();
-        repaint();
-    }
-
-    private void initComponents(String tilteApp) {
-        setTitle(tilteApp);
-        setSize(930, 600);
-        setResizable(false);
-        setLocationRelativeTo(null); // Centrar en la pantalla
-        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-
-        // Crear un contenedor para los dos paneles usando BorderLayout
-        Container container = getContentPane();
-        container.setLayout(new BorderLayout());
-
-        // Agregar los paneles al contenedor
-        container.add(pnlMenu, BorderLayout.WEST);
-        container.add(pnlMain, BorderLayout.CENTER);
-        setVisible(true);
+    private void setPanel(javafx.scene.layout.Pane newPanel , BorderPane root){
+        root.setCenter(newPanel);
     }
 }
