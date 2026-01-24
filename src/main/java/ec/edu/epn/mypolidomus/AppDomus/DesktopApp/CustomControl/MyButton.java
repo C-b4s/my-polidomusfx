@@ -16,7 +16,6 @@ public class MyButton extends Button {
     public MyButton(String text, String iconPath){
         customizeComponent(text, iconPath);
     }
-
     public void customizeComponent(String text, String iconPath){ 
         setText(text);
         setPrefSize(90, 20);
