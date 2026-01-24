@@ -1,12 +1,11 @@
-//  © 2K26 ❱──💀──❰ pat_mic ? code is life : life is code
-package Infrastructure;
+package ec.edu.epn.mypolidomus.Infrastructure;
 
 import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-import Infrastructure.Tools.CMDColor;
+import ec.edu.epn.mypolidomus.Infrastructure.Tools.CMDColor;
 
 public class AppException extends Exception {
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
