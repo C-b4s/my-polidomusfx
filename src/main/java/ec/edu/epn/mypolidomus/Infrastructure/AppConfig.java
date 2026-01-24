@@ -11,8 +11,8 @@ import ec.edu.epn.mypolidomus.Infrastructure.Tools.CMD;
 
 public abstract class AppConfig {
     private static final Properties props = new Properties();
-   
-    private static final String APP_PROPERTIES      = "src/app.properties";             //CAMBIAR
+  
+    private static final String APP_PROPERTIES      = " src\\main\\java\\ec\\edu\\epn\\mypolidomus\\app.properties";             
     private static final String KEY_DB_NAME         = "db.File"     ;               //CAMBIAR
     private static final String KEY_FILE_LOG        = "df.logFile"  ;               //CAMBIAR
     private static final String KEY_FILE_DATA       = "df.AntCoor"  ;               //CAMBIAR
