@@ -1,5 +1,5 @@
 //  © 2K26 ❱──💀──❰ pat_mic ? code is life : life is code
-package Infrastructure;
+package ec.edu.epn.mypolidomus.Infrastructure;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -7,20 +7,20 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.Properties;
 
-import Infrastructure.Tools.CMD;
+import ec.edu.epn.mypolidomus.Infrastructure.Tools.CMD;
 
 public abstract class AppConfig {
     private static final Properties props = new Properties();
    
-    private static final String APP_PROPERTIES      = "src/app.properties";
-    private static final String KEY_DB_NAME         = "db.File"     ;
-    private static final String KEY_FILE_LOG        = "df.logFile"  ;
-    private static final String KEY_FILE_DATA       = "df.AntCoor"  ;
-    private static final String KEY_FILE_ANTNEST    = "df.AntNest"  ;
-    private static final String KEY_FILE_ANTFOOD    = "df.AntFood"  ;
-    private static final String KEY_RES_IMG_MAIN    = "res.img.Main";
-    private static final String KEY_RES_IMG_LOGO    = "res.img.logo";
-    private static final String KEY_RES_IMG_SPLASH  = "res.img.Splash";
+    private static final String APP_PROPERTIES      = "src/app.properties";             //CAMBIAR
+    private static final String KEY_DB_NAME         = "db.File"     ;               //CAMBIAR
+    private static final String KEY_FILE_LOG        = "df.logFile"  ;               //CAMBIAR
+    private static final String KEY_FILE_DATA       = "df.AntCoor"  ;               //CAMBIAR
+    private static final String KEY_FILE_ANTNEST    = "df.AntNest"  ;               //CAMBIAR
+    private static final String KEY_FILE_ANTFOOD    = "df.AntFood"  ;               //CAMBIAR
+    private static final String KEY_RES_IMG_MAIN    = "res.img.Main";               //CAMBIAR
+    private static final String KEY_RES_IMG_LOGO    = "res.img.logo";               //CAMBIAR
+    private static final String KEY_RES_IMG_SPLASH  = "res.img.Splash";             //CAMBIAR
     
     // Configuración dinámica  (Sin recompilar)
     public static final String getDATABASE  (){ return getProperty( KEY_DB_NAME      ); }
