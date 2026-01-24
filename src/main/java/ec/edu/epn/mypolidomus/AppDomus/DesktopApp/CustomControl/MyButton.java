@@ -6,8 +6,6 @@ import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.paint.Color;
-
 public class MyButton extends Button {
 
     public MyButton(String text){
@@ -22,6 +20,11 @@ public class MyButton extends Button {
         setFont(AppStyle.FONT);
         setCursor(Cursor.HAND);
         setAlignment(Pos.CENTER_LEFT);
+        setBackground(
+            AppStyle.createButtonBackground(AppStyle.COLOR_BUTTON_BG)
+        );
+        setTextFill(AppStyle.COLOR_BUTTON_TEXT);
+
        if (iconPath != null && !iconPath.isBlank()) {
             Image icon = new Image(
                 getClass().getResourceAsStream(iconPath)
@@ -36,10 +39,17 @@ public class MyButton extends Button {
         }
         setOnMouseEntered(e ->  {
             setOpacity(0.85); 
-            setTextFill(Color.BLACK);});
+            setBackground(
+                AppStyle.createButtonBackground(AppStyle.COLOR_BUTTON_HOVER)
+            );
+        });
+            
         setOnMouseExited(e  -> {
             setOpacity(1.0);
-             setTextFill(AppStyle.COLOR_FONT);});
+            setBackground(
+                AppStyle.createButtonBackground(AppStyle.COLOR_BUTTON_BG)
+            );
+        });
         
     }
     

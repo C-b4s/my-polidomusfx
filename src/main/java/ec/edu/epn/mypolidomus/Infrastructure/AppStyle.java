@@ -5,6 +5,8 @@ package ec.edu.epn.mypolidomus.Infrastructure;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderStroke;
 import javafx.scene.layout.BorderStrokeStyle;
@@ -34,7 +36,24 @@ public abstract class AppStyle {
     public static final Cursor CURSOR_HAND    = Cursor.HAND;
     public static final Cursor CURSOR_DEFAULT = Cursor.DEFAULT;
 
+
+    public static final Color COLOR_BUTTON_BG= Color.DARKBLUE;
+    public static final Color COLOR_BUTTON_HOVER= Color.WHITESMOKE;
+    public static final Color COLOR_BUTTON_TEXT= Color.WHITE;
+    
+
     private AppStyle() {}
+    
+    public static Background createButtonBackground(Color color) {
+        return new Background(
+            new BackgroundFill(
+                color,
+                new CornerRadii(12),
+                Insets.EMPTY
+            )
+        );
+    }
+
     public static Border createBorderRect(){
         return new Border(
             new BorderStroke(
