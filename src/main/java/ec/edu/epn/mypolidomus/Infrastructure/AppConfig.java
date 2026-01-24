@@ -1,4 +1,4 @@
-//  © 2K26 ❱──💀──❰ pat_mic ? code is life : life is code
+
 package ec.edu.epn.mypolidomus.Infrastructure;
 
 import java.io.FileInputStream;
