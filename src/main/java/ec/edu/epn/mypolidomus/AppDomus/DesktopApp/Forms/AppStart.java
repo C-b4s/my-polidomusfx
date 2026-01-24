@@ -1,4 +1,4 @@
-package ec.edu.epn.mypolidomus.App.DesktopApp.Forms;
+package ec.edu.epn.mypolidomus.AppDomus.DesktopApp.Forms;
 
 
 public class AppStart extends JFrame {
