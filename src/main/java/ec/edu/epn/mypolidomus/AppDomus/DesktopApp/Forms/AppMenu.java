@@ -1,60 +1,65 @@
 package ec.edu.epn.mypolidomus.AppDomus.DesktopApp.Forms;
 
-import java.awt.Dimension;
-import java.awt.Image;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.imageio.ImageIO;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
+import ec.edu.epn.mypolidomus.AppDomus.DesktopApp.CustomControl.MyButton;
+import ec.edu.epn.mypolidomus.Infrastructure.AppConfig;
+import ec.edu.epn.mypolidomus.Infrastructure.AppStyle;
+import javafx.geometry.Pos;
+import javafx.scene.control.Label;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.Priority;
+import javafx.scene.image.Image;
+import javafx.scene.layout.VBox;
 
-import App.DesktopApp.CustomControl.PatButton;
-import Infrastructure.AppConfig;
-
-
-public class AppMenu extends JPanel {
-    private final List<PatButton> menuItems = new ArrayList<>();
-    private final JPanel buttonsPanel = new JPanel();
+public class AppMenu extends VBox {
+    private final List<MyButton> menuItems = new ArrayList<>();
+    private final VBox buttonBox = new VBox(6); 
 
     public AppMenu() {
         initComponents();
     }
 
     private void initComponents() {
-        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        setPreferredSize(new Dimension(250, getHeight()));
 
+        setPrefWidth(250);
+        setSpacing(10);
+        setPadding(AppStyle.createPadding());
+        setAlignment(Pos.TOP_CENTER);
+        
         // add-logo
-        try {
-            Image logo = ImageIO.read(AppConfig.getImgMain());
-            logo = logo.getScaledInstance(100, 100, Image.SCALE_SMOOTH);
-            add(new JLabel(new ImageIcon(logo)));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+            ImageView logo = new ImageView(
+                new Image(AppConfig.getImgMain().toExternalForm())
+            );
+            logo.setFitHeight(100);
+            logo.setFitWidth(100);
+            logo.setPreserveRatio(true);
 
-        // panel para los items del menu
-        buttonsPanel.setLayout(new BoxLayout(buttonsPanel, BoxLayout.Y_AXIS));
-        add(buttonsPanel);
+        //Panel botones
+        buttonBox.setAlignment(Pos.TOP_LEFT);
 
-        // glue para empujar el copyright
-        add(Box.createVerticalGlue());
-        add(new JLabel(" ──❰ 💀 ❱── © 2K26 PATMIC "));
-    }
+        VBox spacer = new VBox();
+        VBox.setVgrow(spacer, Priority.ALWAYS);
 
-    public void addMenuItem(PatButton button) {
+            Label footer = new Label(" ──❰  ❱── © 2K26 MYPOLIDOMUS \"");
+            footer.setFont(AppStyle.FONT_SMALL);
+            footer.setTextFill(AppStyle.COLOR_FONT_LIGHT);
+
+            getChildren().addAll(
+                logo,
+                buttonBox,
+                spacer,
+                footer
+            );
+        }         
+
+    public void addMenuItem(MyButton button) {
         menuItems.add(button);
-        buttonsPanel.add(button);
-        buttonsPanel.revalidate();
-        buttonsPanel.repaint();
+        buttonBox.getChildren().add(button);
     }
 
-    public List<PatButton> getMenuItems() {
+    public List<MyButton> getMenuItems() {
         return menuItems;
     }
 }

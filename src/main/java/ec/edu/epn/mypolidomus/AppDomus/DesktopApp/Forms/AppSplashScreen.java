@@ -1,57 +1,71 @@
 package ec.edu.epn.mypolidomus.AppDomus.DesktopApp.Forms;
 
-import java.awt.BorderLayout;
-import java.awt.Image;
+import ec.edu.epn.mypolidomus.Infrastructure.AppConfig;
+import ec.edu.epn.mypolidomus.Infrastructure.AppStyle;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.application.Application;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.control.ProgressBar;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
+import javafx.util.Duration;
 
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JProgressBar;
-
-import Infrastructure.AppConfig;
-
-public class AppSplashScreen extends JFrame {
+public class AppSplashScreen extends Application {
     private static final double SCALE_PERCENT = 0.4; // % del tamaño original de la imagen
 
-    public AppSplashScreen() {
-        initComponents();
+    @Override
+    public void start(Stage stage) throws Exception {
+
+        Image splashImage = new Image(AppConfig.getImgSplash().toExternalForm());
+
+        ImageView imageView = new ImageView(splashImage);
+        imageView.setPreserveRatio(true);
+        imageView.setFitWidth(splashImage.getWidth() *SCALE_PERCENT);
+
+        ProgressBar progressBar = new ProgressBar(0);
+        progressBar.setPrefWidth(imageView.getFitWidth());
+
+        VBox root = new VBox(8, imageView, progressBar);
+        root.setAlignment(Pos.CENTER);
+        root.setPadding((AppStyle.createPadding()));
+        root.setBackground(
+            new Background(
+                new BackgroundFill(Color.WHITE, new CornerRadii(12), Insets.EMPTY)
+            )
+        );
+
+        Scene scene = new Scene (root);
+
+        stage.initStyle(StageStyle.UNDECORATED);
+        stage.setScene(scene);
+        stage.centerOnScreen();
+        stage.show();
+
+        simulateLoading(progressBar,stage);
     }
+    private void simulateLoading(ProgressBar progressBar, Stage stage){
+        Timeline timeline = new Timeline(
+            new KeyFrame(Duration.millis(40), e ->{
+                progressBar.setProgress(progressBar.getProgress()+0.01);
+            })
+        );
+        timeline.setCycleCount(100);
 
-    private void initComponents() {
-        JProgressBar prbLoading = new JProgressBar(0, 100);
-        ImageIcon icoImagen = new ImageIcon(AppConfig.getImgSplash());
-
-        // Escalar la imagen según el porcentaje
-        int newWidth  = (int) (icoImagen.getIconWidth()  * SCALE_PERCENT);
-        int newHeight = (int) (icoImagen.getIconHeight() * SCALE_PERCENT);
-
-        Image scaledImage = icoImagen.getImage().getScaledInstance(newWidth, newHeight, Image.SCALE_SMOOTH);
-        ImageIcon scaledIcon = new ImageIcon(scaledImage);
-
-        JLabel lblSplash = new JLabel(scaledIcon);
-
-        prbLoading.setStringPainted(true);
-        setUndecorated(true);
-        getContentPane().add(lblSplash, BorderLayout.CENTER);
-        add(prbLoading, BorderLayout.SOUTH);
-
-        // Ajustar tamaño del frame al nuevo tamaño de la imagen
-        setSize(newWidth, newHeight + prbLoading.getPreferredSize().height);
-        setLocationRelativeTo(null); // Centrar en la pantalla
-        setVisible(true);
-
-        // Simulación de carga
-        for (int i = 0; i <= 100; i++) {
-            try {
-                Thread.sleep(50);
-            } catch (InterruptedException _) {
-                Thread.currentThread().interrupt();
-                break;
-            }
-            prbLoading.setValue(i);
-        }
-
-        setVisible(false);
-        dispose();
+        timeline.setOnFinished(e ->{
+            stage.close();
+        });
+        timeline.play();
     }
+    
+   
 }

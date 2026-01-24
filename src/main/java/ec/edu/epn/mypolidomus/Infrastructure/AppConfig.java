@@ -13,14 +13,14 @@ public abstract class AppConfig {
     private static final Properties props = new Properties();
   
     private static final String APP_PROPERTIES      = " src\\main\\java\\ec\\edu\\epn\\mypolidomus\\app.properties";             
-    private static final String KEY_DB_NAME         = "db.File"     ;               //CAMBIAR
-    private static final String KEY_FILE_LOG        = "df.logFile"  ;               //CAMBIAR
-    private static final String KEY_FILE_DATA       = "df.AntCoor"  ;               //CAMBIAR
-    private static final String KEY_FILE_ANTNEST    = "df.AntNest"  ;               //CAMBIAR
-    private static final String KEY_FILE_ANTFOOD    = "df.AntFood"  ;               //CAMBIAR
-    private static final String KEY_RES_IMG_MAIN    = "res.img.Main";               //CAMBIAR
-    private static final String KEY_RES_IMG_LOGO    = "res.img.logo";               //CAMBIAR
-    private static final String KEY_RES_IMG_SPLASH  = "res.img.Splash";             //CAMBIAR
+    private static final String KEY_DB_NAME         = "db.File"     ;               
+    private static final String KEY_FILE_LOG        = "df.logFile"  ;               
+    private static final String KEY_FILE_DATA       = "df.AntCoor"  ;               
+    private static final String KEY_FILE_ANTNEST    = "df.AntNest"  ;               
+    private static final String KEY_FILE_ANTFOOD    = "df.AntFood"  ;               
+    private static final String KEY_RES_IMG_MAIN    = "res.img.Main";               
+    private static final String KEY_RES_IMG_LOGO    = "res.img.logo";               
+    private static final String KEY_RES_IMG_SPLASH  = "res.img.Splash";             
     
     // Configuración dinámica  (Sin recompilar)
     public static final String getDATABASE  (){ return getProperty( KEY_DB_NAME      ); }
