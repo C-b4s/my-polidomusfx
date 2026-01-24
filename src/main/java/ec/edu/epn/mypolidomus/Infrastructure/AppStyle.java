@@ -19,8 +19,8 @@ public abstract class AppStyle {
     
 
     public static final Color COLOR_FONT        = Color.BLACK;
-    public static final Color COLOR_FONT_LIGHT  = Color.BLACK;
-    public static final Color COLOR_CURSOR      = Color.BLACK;
+    public static final Color COLOR_FONT_LIGHT  = Color.LIGHTCORAL;
+    public static final Color COLOR_CURSOR      = Color.WHITE;
     public static final Color COLOR_BORDER      = Color.DARKBLUE;
 
     public static final Font  FONT              = Font.font(FONT_FAMILY, FontWeight.NORMAL,14);
