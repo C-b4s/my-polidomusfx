@@ -1,41 +1,25 @@
 package ec.edu.epn.mypolidomus.AppDomus.DesktopApp.CustomControl;
 
-import javax.swing.*;
-import java.awt.*;
-import javax.swing.border.Border;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
+import ec.edu.epn.mypolidomus.Infrastructure.AppStyle;
+import javafx.scene.control.TextField;
 
-import Infrastructure.AppStyle;
-
-public class MyTextBox extends JTextField {
+public class MyTextBox extends TextField {
 
     public MyTextBox() {
         customizeComponent();
     }
 
     private void customizeComponent() {
-        setBorderRect();
-        setBorderDownLine();
-        setFont(AppStyle.FONT);  
-        setForeground(AppStyle.COLOR_FONT_LIGHT);  
-        setCaretColor(AppStyle.COLOR_CURSOR);   // Color del cursor
-        setMargin(new Insets(4, 4, 4, 4));      // Ajusta los márgenes
-        setOpaque(false);                       // Fondo transparente
-        //setUI(new BasicTextFieldUI());        // Para deshabilitar el subrayado por defecto
-    }
 
-    public void setBorderRect() {
-        Border lineBorder = BorderFactory.createLineBorder(AppStyle.COLOR_BORDER);
-        Border emptyBorder = new EmptyBorder(4, 4, 4, 4);  // Márgenes internos
-        setBorder( new CompoundBorder(lineBorder, emptyBorder));
-    }
-
-    private void setBorderDownLine(){
-        int thickness = 1;
-        setBorder(  BorderFactory.createCompoundBorder(
-                    BorderFactory.createEmptyBorder(0, 0, thickness, 0),
-                    BorderFactory.createMatteBorder(0, 0, thickness, 0, AppStyle.COLOR_BORDER) 
-        ));
+        // Fuente y color
+        setFont(AppStyle.FONT);
+        setStyle(
+            "-fx-text-fill: " + AppStyle.COLOR_FONT_LIGHT + ";" +
+            "-fx-prompt-text-fill: " + AppStyle.COLOR_FONT_LIGHT + ";" +
+            "-fx-background-color: transparent;" +
+            "-fx-border-color: " + AppStyle.COLOR_BORDER + ";" +
+            "-fx-border-width: 0 0 1 0;" +     // solo línea inferior
+            "-fx-padding: 4 4 4 4;"
+        );
     }
 }

@@ -13,12 +13,12 @@ public class MyButton extends Button {
     public MyButton(String text){
         customizeComponent(text,null);
     }
-    public MyButton(String text, String iconPath){
+    public MyButton(String text, String iconPath){  
         customizeComponent(text, iconPath);
     }
     public void customizeComponent(String text, String iconPath){ 
         setText(text);
-        setPrefSize(90, 20);
+        setPrefSize(120, 30);
         setFont(AppStyle.FONT);
         setCursor(Cursor.HAND);
         setAlignment(Pos.CENTER_LEFT);
