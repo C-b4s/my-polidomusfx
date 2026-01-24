@@ -1,4 +1,4 @@
-package ec.edu.epn.mypolidomus.App.DesktopApp.CustomControl;
+package ec.edu.epn.mypolidomus.AppDomus.DesktopApp.CustomControl;
 
 import java.awt.Color;
 import java.awt.Font;
