@@ -7,11 +7,8 @@ public class PolidomusDTO {
 
     private String Serie;
     private String Alias;
-    private String TipoPredio;
-
     private String Direccion;
     private String Referencia;
-
     private String Estado;
     private String FechaCreacion;
     private String FechaModifica;
@@ -36,7 +33,6 @@ public class PolidomusDTO {
         IdPolidomus = idPolidomus;
         Serie = serie;
         Alias = alias;
-        TipoPredio = tipoPredio;
         Direccion = direccion;
         Referencia = referencia;
         Estado = estado;
@@ -55,9 +51,6 @@ public class PolidomusDTO {
 
     public String getAlias() { return Alias; }
     public void setAlias(String alias) { Alias = alias; }
-
-    public String getTipoPredio() { return TipoPredio; }
-    public void setTipoPredio(String tipoPredio) { TipoPredio = tipoPredio; }
 
     public String getDireccion() { return Direccion; }
     public void setDireccion(String direccion) { Direccion = direccion; }
@@ -80,7 +73,6 @@ public class PolidomusDTO {
         + "\n IdPolidomus      : " + getIdPolidomus()
         + "\n Serie            : " + getSerie()
         + "\n Alias            : " + getAlias()
-        + "\n TipoPredio       : " + getTipoPredio()
         + "\n Direccion        : " + getDireccion()
         + "\n Estado           : " + getEstado()
         + "\n FechaCreacion    : " + getFechaCreacion()
