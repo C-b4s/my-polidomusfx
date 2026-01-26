@@ -1,32 +1,38 @@
 package ec.edu.epn.mypolidomus.DataAccess.DTOs;
 
-public class UsuarioTecnicoDTO {
+public class EstadoDTO {
 
-    private Integer IdUsuarioTecnico;
+    private Integer IdEstado;
+    private String Nombre;
     private String Descripcion;
     private String Estado;
     private String FechaCreacion;
     private String FechaModifica;
 
-    public UsuarioTecnicoDTO() {
+    public EstadoDTO() {
     }
 
-    public UsuarioTecnicoDTO(String descripcion) {
-        this.IdUsuarioTecnico = 0;
+    public EstadoDTO(String nombre, String descripcion) {
+        this.IdEstado = 0;
+        this.Nombre = nombre;
         this.Descripcion = descripcion;
         this.Estado = "A";
     }
 
-    public UsuarioTecnicoDTO(Integer idUsuarioTecnico, String descripcion, String estado, String fechaCreacion, String fechaModifica) {
-        this.IdUsuarioTecnico = idUsuarioTecnico;
+    public EstadoDTO(Integer idEstado, String nombre, String descripcion, String estado, String fechaCreacion, String fechaModifica) {
+        this.IdEstado = idEstado;
+        this.Nombre = nombre;
         this.Descripcion = descripcion;
         this.Estado = estado;
         this.FechaCreacion = fechaCreacion;
         this.FechaModifica = fechaModifica;
     }
 
-    public Integer getIdUsuarioTecnico() { return IdUsuarioTecnico; }
-    public void setIdUsuarioTecnico(Integer idUsuarioTecnico) { IdUsuarioTecnico = idUsuarioTecnico; }
+    public Integer getIdEstado() { return IdEstado; }
+    public void setIdEstado(Integer idEstado) { IdEstado = idEstado; }
+
+    public String getNombre() { return Nombre; }
+    public void setNombre(String nombre) { Nombre = nombre; }
 
     public String getDescripcion() { return Descripcion; }
     public void setDescripcion(String descripcion) { Descripcion = descripcion; }
@@ -43,7 +49,8 @@ public class UsuarioTecnicoDTO {
     @Override
     public String toString() {
         return getClass().getName()
-        + "\n IdUsuarioTecnico : " + getIdUsuarioTecnico()
+        + "\n IdEstado         : " + getIdEstado()
+        + "\n Nombre           : " + getNombre()
         + "\n Descripcion      : " + getDescripcion()
         + "\n Estado           : " + getEstado()
         + "\n FechaCreacion    : " + getFechaCreacion()
