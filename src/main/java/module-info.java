@@ -1,8 +1,7 @@
 module ec.edu.epn.mypolidomus {
     requires javafx.controls;
     requires javafx.fxml;
-    requires java.desktop;
-    requires java.sql;
+    requires javafx.graphics;
 
     opens ec.edu.epn.mypolidomus to javafx.fxml;
     exports ec.edu.epn.mypolidomus;

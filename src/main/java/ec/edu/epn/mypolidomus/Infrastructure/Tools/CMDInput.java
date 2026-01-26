@@ -1,4 +1,5 @@
 package ec.edu.epn.mypolidomus.Infrastructure.Tools;
+
 import java.util.Scanner;
 
 public abstract class CMDInput {

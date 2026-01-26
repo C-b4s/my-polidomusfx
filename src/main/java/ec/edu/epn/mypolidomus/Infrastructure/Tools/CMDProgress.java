@@ -1,20 +1,25 @@
 package ec.edu.epn.mypolidomus.Infrastructure.Tools;
+
 public abstract class CMDProgress {
 
     private CMDProgress() {}
     
     /**
      * avance de tareas con spinner
-     * @throws InterruptedException 
      */
-    public static void showSpinner() throws InterruptedException
+    public static String showSpinner()  
     {
-        String c= "|/-\\"; 
+        String c= "|/-\\|"; 
         for (int x =0 ; x <= 100 ; x++) {
             String srt = "\r "+ c.charAt(x % c.length()) + " " + x + " % ";
             System.out.print(srt);
-            Thread.sleep(30);
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
         }
+        return "";
     }
 
     /**

@@ -1,22 +1,71 @@
+
 package ec.edu.epn.mypolidomus.Infrastructure;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
+import java.util.Properties;
+
+import ec.edu.epn.mypolidomus.Infrastructure.Tools.CMD;
 
 public abstract class AppConfig {
-    //Paths Storage
-    public static final String DATABASE = "jdbc:sqlite:storage\\Databases\\antCiberDron.sqlite";
-    public static final String DATAFILE = "storage\\DataFiles\\tv.csv";
-    public static final String LOGFILE  = "storage\\Logs\\AppErrors.log";
-
-    //Resources
-    public static final URL URL_MAIN    = AppConfig.class.getResource("Resource/logo.png");
-    public static final URL URL_LOGO    = AppConfig.class.getResource("Resource/logo.png");
-    public static final URL URL_SPLASH  = AppConfig.class.getResource("/Infrastructure/Assets/Img/Splash.png");
-
-    //AppMSGs
+    private static final Properties props = new Properties();
+  
+    private static final String APP_PROPERTIES      = " src\\main\\java\\ec\\edu\\epn\\mypolidomus\\app.properties";             
+    private static final String KEY_DB_NAME         = "db.File"     ;               
+    private static final String KEY_FILE_LOG        = "df.logFile"  ;               
+    private static final String KEY_FILE_DATA       = "df.AntCoor"  ;               
+    private static final String KEY_FILE_ANTNEST    = "df.AntNest"  ;               
+    private static final String KEY_FILE_ANTFOOD    = "df.AntFood"  ;               
+    private static final String KEY_RES_IMG_MAIN    = "res.img.Main";               
+    private static final String KEY_RES_IMG_LOGO    = "res.img.logo";               
+    private static final String KEY_RES_IMG_SPLASH  = "res.img.Splash";             
+    
+    // Configuración dinámica  (Sin recompilar)
+    public static final String getDATABASE  (){ return getProperty( KEY_DB_NAME      ); }
+    public static final String getLOGFILE   (){ return getProperty( KEY_FILE_LOG     ); }
+    public static final String getDATAFILE  (){ return getProperty( KEY_FILE_DATA    ); }
+    public static final String getANTFOOD   (){ return getProperty( KEY_FILE_ANTFOOD ); }
+    public static final String getANTNEST   (){ return getProperty( KEY_FILE_ANTNEST ); }
+    
+    // Resources .  Recurso estático empaquetado
+    public static final URL getImgMain      (){ return getAppResource( KEY_RES_IMG_MAIN   ); }
+    public static final URL getImglogo      (){ return getAppResource( KEY_RES_IMG_LOGO   ); }
+    public static final URL getImgSplash    (){ return getAppResource( KEY_RES_IMG_SPLASH ); }
+    
+    // AppMSGs
     public static final String MSG_DEFAULT_ERROR    = "Ups! Error inesperado. Por favor, contacte al administrador del sistema.";
     public static final String MSG_DEFAULT_CLASS    = "undefined";
     public static final String MSG_DEFAULT_METHOD   = "undefined";
 
-    private AppConfig() {}
+    static {
+        try (InputStream appProperties = new FileInputStream(APP_PROPERTIES)) {
+            props.load(appProperties);
+        } catch (IOException e) {
+            CMD.printlnError("ERROR al cargar ❱❱ " + e.getMessage());
+        }
+    }
+
+    private AppConfig(){}
+
+    static String getProperty(String key) {
+        String path = props.getProperty(key);
+        CMD.println("AppConfig ❱❱ "+ APP_PROPERTIES +"." + key + " : "+ path);
+        if(path != null)
+            return  path;
+        else
+            CMD.printlnError("ERROR ❱❱ " + APP_PROPERTIES +"." + key + " : "+ path);
+        return null;
+    }
+
+    static URL getAppResource(String key) {
+        String path = getProperty(key);
+        if(path != null)
+            return  AppConfig.class.getResource(path);
+        else
+            CMD.printlnError("ERROR ❱❱ getAppResource : " + APP_PROPERTIES +"." + key + " : "+ path);
+        return null;
+    }
+    //orden 3526516 0999508900
 }

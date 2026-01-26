@@ -1,4 +1,5 @@
 package ec.edu.epn.mypolidomus.Infrastructure.Tools;
+
 public abstract class CMDColor {
      // Reset
     public static final String RESET = "\033[0m";       // Text Reset
@@ -74,12 +75,4 @@ public abstract class CMDColor {
     public static final String BACKGROUND_BRIGHT_WHITE = "\033[0;107m";   // WHITE
 
     private CMDColor() {}
-    
-    /**
-     * Clears the console screen
-     */
-   public static void clearConsole() {
-        System.out.print("\033[H\033[2J");
-        System.out.flush();
-    }
 }

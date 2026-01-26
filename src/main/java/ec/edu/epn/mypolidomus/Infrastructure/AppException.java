@@ -1,9 +1,12 @@
 package ec.edu.epn.mypolidomus.Infrastructure;
+
 import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+
 import ec.edu.epn.mypolidomus.Infrastructure.Tools.CMDColor;
+
 public class AppException extends Exception {
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
  
@@ -20,9 +23,9 @@ public class AppException extends Exception {
         String className  = (clase  == null) ? AppConfig.MSG_DEFAULT_CLASS          : clase.getSimpleName();
         String methodName = (metodo == null) ? AppConfig.MSG_DEFAULT_METHOD         : metodo;
         logMsg = (logMsg == null || logMsg.isBlank()) ? AppConfig.MSG_DEFAULT_ERROR : logMsg;
-        logMsg = String.format("╭── SHOW ❱❱ %s \n╰──── LOG  ❱❱ %s | %s.%s | %s", getMessage(), timestamp, className, methodName, logMsg);
+        logMsg = String.format("╭─💀─ SHOW ❱❱ %s \n╰──── LOG  ❱❱ %s | %s.%s | %s", getMessage(), timestamp, className, methodName, logMsg);
 
-        try (PrintWriter writer = new PrintWriter(new FileWriter(AppConfig.LOGFILE, true))) {
+        try (PrintWriter writer = new PrintWriter(new FileWriter(AppConfig.getLOGFILE(), true))) {
             System.err.println(CMDColor.BLUE  + logMsg);
             writer.println(logMsg);
         } catch (Exception e) {
