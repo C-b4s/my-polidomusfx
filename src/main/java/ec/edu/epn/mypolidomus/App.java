@@ -8,6 +8,10 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
+import ec.edu.epn.mypolidomus.DataAccess.DAOs.EstadoDAO;
+import ec.edu.epn.mypolidomus.DataAccess.DTOs.EstadoDTO;
+import ec.edu.epn.mypolidomus.Infrastructure.AppException;
+
 /**
  * JavaFX App
  */
@@ -31,8 +35,13 @@ public class App extends Application {
         return fxmlLoader.load();
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws AppException {
         launch();
+        EstadoDAO eDao = new EstadoDAO();
+        EstadoDTO eDTO = new EstadoDTO();
+
+        for (EstadoDTO dto : eDao.readAll())
+            System.out.println(eDTO.toString());
     }
 
 }
