@@ -1,13 +1,15 @@
 -- database: ../Databases/Polidomus.sqlite
-PRAGMA foreign_keys = ON;
+PRAGMA foreign_keys = OFF;
 
 DROP VIEW IF EXISTS vwUsuarioDetalle;
 DROP TABLE IF EXISTS Polidomus;
+DROP TABLE IF EXISTS Arduinos;
 DROP TABLE IF EXISTS UsuarioCliente;
 DROP TABLE IF EXISTS UsuarioTecnico;
 DROP TABLE IF EXISTS Usuario;
 DROP TABLE IF EXISTS UsuarioTipo;
 DROP TABLE IF EXISTS Estado;
+
 
 CREATE TABLE Estado (
       IdEstado       INTEGER PRIMARY KEY AUTOINCREMENT
@@ -70,6 +72,15 @@ CREATE TABLE Polidomus (
      ,FOREIGN KEY (IdUsuarioTecnico) REFERENCES UsuarioTecnico(IdUsuarioTecnico) ON DELETE SET NULL
 );
 
+CREATE TABLE Arduinos (
+      IdArduinos       INTEGER PRIMARY KEY AUTOINCREMENT
+     ,Nombre         VARCHAR(20) NOT NULL UNIQUE
+     ,Descripcion    VARCHAR(100) NULL
+     ,Estado         VARCHAR(1)  NOT NULL DEFAULT 'A'
+     ,FechaCreacion  DATETIME NOT NULL DEFAULT (datetime('now','localtime'))
+     ,FechaModifica  DATETIME NOT NULL DEFAULT (datetime('now','localtime'))
+);
+
 CREATE TRIGGER trg_Update_Estado AFTER UPDATE ON Estado
 BEGIN UPDATE Estado SET FechaModifica = datetime('now','localtime') WHERE IdEstado = NEW.IdEstado; END;
 
@@ -91,7 +102,6 @@ BEGIN UPDATE Polidomus SET FechaModifica = datetime('now','localtime') WHERE IdP
 INSERT INTO Estado (Nombre, Descripcion) VALUES ('Activo', 'Registro habilitado'), ('Inactivo', 'Registro deshabilitado');
 
 INSERT INTO UsuarioTipo (Nombre, Descripcion) VALUES 
- ('Administrador', 'Control total'),
  ('Cliente', 'Solicita servicios'),
  ('Tecnico', 'Realiza servicios');
 
@@ -102,7 +112,7 @@ INSERT INTO UsuarioCliente (IdUsuario, Direccion)
 VALUES ((SELECT IdUsuario FROM Usuario WHERE Correo='juan@gmail.com'), 'Av. Amazonas');
 
 INSERT INTO Usuario (IdUsuarioTipo, IdEstado, Nombre, Correo, Contrasena) 
-VALUES (3, 1, 'Maria Lopez', 'maria@polidomus.com', 'hash456');
+VALUES (2, 1, 'Maria Lopez', 'maria@polidomus.com', 'hash456');
 
 INSERT INTO UsuarioTecnico (IdUsuario, Descripcion)
 VALUES ((SELECT IdUsuario FROM Usuario WHERE Correo='maria@polidomus.com'), 'Tecnico Senior');
@@ -114,6 +124,8 @@ VALUES (
     1,
     'SERIE-001'
 );
+
+INSERT INTO Arduinos (Nombre, Descripcion) VALUES ('Arduino 01', 'Arduino número 1'), ('Arduino 02', 'Arduino número 2'), ('Arduino 03', 'Arduino número 3');
 
 CREATE VIEW vwUsuarioDetalle AS
 SELECT 
