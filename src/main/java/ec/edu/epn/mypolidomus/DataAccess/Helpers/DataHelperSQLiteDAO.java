@@ -1,27 +1,31 @@
 package ec.edu.epn.mypolidomus.DataAccess.Helpers;
+
 import ec.edu.epn.mypolidomus.DataAccess.Interfaces.IDAO;
 import ec.edu.epn.mypolidomus.Infrastructure.AppConfig;
 import ec.edu.epn.mypolidomus.Infrastructure.AppException;
-import java.util.ArrayList;
-import java.util.List;
+
+import javafx.beans.property.Property;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
+import java.sql.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
-public class DataHelperSQLiteDAO <T> implements IDAO<T> {
-    protected final Class<T>DTOClass;
-    protected final String  tableName;
-    protected final String  tablePK;
+public class DataHelperSQLiteDAO<T> implements IDAO<T> {
 
-    private static final String DBPath = AppConfig.DATABASE; 
+    protected final Class<T> DTOClass;
+    protected final String tableName;
+    protected final String tablePK;
+
+    private static final String DBPath = AppConfig.getDATABASE();
     private static Connection conn = null;
+
+    /* ==========================================================
+       CONEXIÓN
+       ========================================================== */
 
     protected static synchronized Connection openConnection() throws SQLException {
         if (conn == null || conn.isClosed()) {
@@ -36,52 +40,80 @@ public class DataHelperSQLiteDAO <T> implements IDAO<T> {
         }
     }
 
-    protected String getDataTimeNow() {
-        return LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+    protected String getDateTimeNow() {
+        return LocalDateTime.now()
+                .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
     }
 
-    /**
-     * Construye la relacion entre la clase DTO y la tabla de la base de datos
-     * @param dtoClass  : Nombre de la clase DTO
-     * @param tableName : Nombre de la tabla
-     * @param tablePK   : Nombre del PK de la tabla
-     * @throws AppException: Error al asociar la clase con la tabla
-     */
-    public DataHelperSQLiteDAO(Class<T> dtoClass, String tableName, String tablePK) throws AppException {
+    /* ==========================================================
+       CONSTRUCTOR
+       ========================================================== */
+
+    public DataHelperSQLiteDAO(Class<T> dtoClass,
+                              String tableName,
+                              String tablePK) throws AppException {
         try {
             openConnection();
         } catch (SQLException e) {
             throw new AppException(null, e, getClass(), "DataHelperSQLiteDAO");
         }
-        this.DTOClass  = dtoClass;
+        this.DTOClass = dtoClass;
         this.tableName = tableName;
-        this.tablePK   = tablePK;
+        this.tablePK = tablePK;
     }
+
+    /* ==========================================================
+       MÉTODOS AUXILIARES PARA JAVAFX PROPERTIES
+       ========================================================== */
+
+    private Object extractValue(Field field, Object entity)
+            throws IllegalAccessException {
+        Object value = field.get(entity);
+        if (value instanceof Property<?> prop) {
+            return prop.getValue();
+        }
+        return value;
+    }
+
+    @SuppressWarnings("unchecked")
+    private void assignValue(Field field, Object instance, Object value)
+            throws IllegalAccessException {
+        Object fieldValue = field.get(instance);
+
+        if (fieldValue instanceof Property<?> prop) {
+            ((Property<Object>) prop).setValue(value);
+        } else {
+            field.set(instance, value);
+        }
+    }
+
+    /* ==========================================================
+       CREATE
+       ========================================================== */
 
     @Override
     public boolean create(T entity) throws AppException {
         Field[] fields = DTOClass.getDeclaredFields();
         StringBuilder columns = new StringBuilder();
-        StringBuilder placeholders = new StringBuilder();
+        StringBuilder values = new StringBuilder();
 
         for (Field field : fields) {
-            field.setAccessible(true);
             String name = field.getName();
-            // Excluir PK y campos por defecto y auditoria
             if (!name.equalsIgnoreCase(tablePK)
                 && !name.equalsIgnoreCase("Estado")
                 && !name.equalsIgnoreCase("FechaCreacion")
                 && !name.equalsIgnoreCase("FechaModifica")) {
+
                 columns.append(name).append(",");
-                placeholders.append("?,");
+                values.append("?,");
             }
         }
 
-        // Eliminar la última coma
-        String cols = columns.substring(0, columns.length() - 1);
-        String vals = placeholders.substring(0, placeholders.length() - 1);
+        columns.setLength(columns.length() - 1);
+        values.setLength(values.length() - 1);
 
-        String sql = String.format("INSERT INTO %s (%s) VALUES (%s)", tableName, cols, vals);
+        String sql = "INSERT INTO " + tableName +
+                     " (" + columns + ") VALUES (" + values + ")";
 
         try (PreparedStatement stmt = openConnection().prepareStatement(sql)) {
             int index = 1;
@@ -90,14 +122,22 @@ public class DataHelperSQLiteDAO <T> implements IDAO<T> {
                 if (!name.equalsIgnoreCase(tablePK)
                     && !name.equalsIgnoreCase("Estado")
                     && !name.equalsIgnoreCase("FechaCreacion")
-                    && !name.equalsIgnoreCase("FechaModifica")) 
-                        stmt.setObject(index++, field.get(entity));
+                    && !name.equalsIgnoreCase("FechaModifica")) {
+
+                    field.setAccessible(true);
+                    stmt.setObject(index++, extractValue(field, entity));
+                }
             }
-            return (stmt.executeUpdate() > 0);
-        } catch (SQLException | IllegalAccessException e) {
+            return stmt.executeUpdate() > 0;
+
+        } catch (Exception e) {
             throw new AppException(null, e, getClass(), "create");
         }
     }
+
+    /* ==========================================================
+       UPDATE
+       ========================================================== */
 
     @Override
     public boolean update(T entity) throws AppException {
@@ -107,96 +147,122 @@ public class DataHelperSQLiteDAO <T> implements IDAO<T> {
             Object pkValue = null;
 
             for (Field field : fields) {
-                String name = field.getName();
-
-                if (!name.equalsIgnoreCase(tablePK)) {
-                    updates.append(name).append(" = ?, ");
+                field.setAccessible(true);
+                if (field.getName().equalsIgnoreCase(tablePK)) {
+                    pkValue = extractValue(field, entity);
                 } else {
-                    if (!field.canAccess(entity)) {
-                        field.setAccessible(true);
-                    }
-                    pkValue = field.get(entity);
+                    updates.append(field.getName()).append(" = ?, ");
                 }
             }
 
-            updates.append("FechaModifica = ?"); // campo técnico de auditoría
+            updates.append("FechaModifica = ?");
 
-            String sql = String.format("UPDATE %s SET %s WHERE %s = ?", tableName, updates, tablePK);
+            String sql = "UPDATE " + tableName +
+                         " SET " + updates +
+                         " WHERE " + tablePK + " = ?";
 
             try (PreparedStatement stmt = openConnection().prepareStatement(sql)) {
                 int index = 1;
                 for (Field field : fields) {
-                    String name = field.getName();
-                    if (!name.equalsIgnoreCase(tablePK)) {
-                        if (!field.canAccess(entity)) {
-                            field.setAccessible(true);
-                        }
-                        stmt.setObject(index++, field.get(entity));
+                    if (!field.getName().equalsIgnoreCase(tablePK)) {
+                        stmt.setObject(index++, extractValue(field, entity));
                     }
                 }
 
-                stmt.setString(index++, getDataTimeNow()); // FechaModifica
-                stmt.setObject(index, pkValue); // WHERE PK = ?
+                stmt.setString(index++, getDateTimeNow());
+                stmt.setObject(index, pkValue);
 
                 return stmt.executeUpdate() > 0;
             }
 
-        }   catch (SQLException | IllegalAccessException e) {
+        } catch (Exception e) {
             throw new AppException(null, e, getClass(), "update");
         }
     }
 
+    /* ==========================================================
+       DELETE (LÓGICO)
+       ========================================================== */
+
     @Override
     public boolean delete(Integer id) throws AppException {
-        String sql = String.format("UPDATE %s SET Estado = ?, FechaModifica = ? WHERE %s = ?", tableName, tablePK);
+        String sql = "UPDATE " + tableName +
+                     " SET Estado = ?, FechaModifica = ?" +
+                     " WHERE " + tablePK + " = ?";
+
         try (PreparedStatement stmt = openConnection().prepareStatement(sql)) {
             stmt.setString(1, "X");
-            stmt.setString(2, getDataTimeNow());
-            stmt.setInt   (3, id);
+            stmt.setString(2, getDateTimeNow());
+            stmt.setInt(3, id);
             return stmt.executeUpdate() > 0;
-        }catch (SQLException e) {
+
+        } catch (SQLException e) {
             throw new AppException(null, e, getClass(), "delete");
         }
     }
 
+    /* ==========================================================
+       READ BY ID
+       ========================================================== */
+
     @Override
     public T readBy(Integer id) throws AppException {
-        String sql = String.format("SELECT * FROM %s WHERE %s = ? AND Estado = 'A'", tableName, tablePK);
+        String sql = "SELECT * FROM " + tableName +
+                     " WHERE " + tablePK + " = ? AND Estado = 'A'";
+
         try (PreparedStatement stmt = openConnection().prepareStatement(sql)) {
             stmt.setInt(1, id);
             try (ResultSet rs = stmt.executeQuery()) {
                 return rs.next() ? mapResultSetToEntity(rs) : null;
             }
-        }catch (SQLException e) {
+        } catch (SQLException e) {
             throw new AppException(null, e, getClass(), "readBy");
         }
     }
 
+    /* ==========================================================
+       READ ALL
+       ========================================================== */
+
     @Override
     public List<T> readAll() throws AppException {
         List<T> list = new ArrayList<>();
-        String sql = String.format("SELECT * FROM %s WHERE Estado = 'A'", tableName);
+        String sql = "SELECT * FROM " + tableName + " WHERE Estado = 'A'";
+
         try (PreparedStatement stmt = openConnection().prepareStatement(sql);
              ResultSet rs = stmt.executeQuery()) {
+
             while (rs.next()) {
                 list.add(mapResultSetToEntity(rs));
             }
+
         } catch (SQLException e) {
             throw new AppException(null, e, getClass(), "readAll");
         }
         return list;
     }
 
+    /* ==========================================================
+       COUNT
+       ========================================================== */
+
     @Override
     public Integer getMaxReg() throws AppException {
-        String sql = String.format("SELECT COUNT(*) FROM %s WHERE Estado = 'A'", tableName);
+        String sql = "SELECT COUNT(*) FROM " + tableName + " WHERE Estado = 'A'";
+
         try (PreparedStatement stmt = openConnection().prepareStatement(sql);
              ResultSet rs = stmt.executeQuery()) {
+
             return rs.next() ? rs.getInt(1) : 0;
+
         } catch (SQLException e) {
             throw new AppException(null, e, getClass(), "getMaxReg");
         }
     }
+
+    /* ==========================================================
+       MAPEO RESULTSET → DTO (JavaFX)
+       ========================================================== */
 
     protected T mapResultSetToEntity(ResultSet rs) throws AppException {
         try {
@@ -204,17 +270,19 @@ public class DataHelperSQLiteDAO <T> implements IDAO<T> {
             ResultSetMetaData meta = rs.getMetaData();
 
             for (int i = 1; i <= meta.getColumnCount(); i++) {
-                String col = meta.getColumnLabel(i); // usa alias si existen
-                Object val = rs.getObject(i);
+                String column = meta.getColumnLabel(i);
+                Object value = rs.getObject(i);
 
-                Field field = DTOClass.getDeclaredField(col);
-                if (!field.canAccess(instance)) {
-                    field.setAccessible(true);
-                }
-                field.set(instance, val);
+                Field field = DTOClass.getDeclaredField(column);
+                field.setAccessible(true);
+                assignValue(field, instance, value);
             }
             return instance;
-        } catch (SQLException | NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchFieldException e) {
+
+        } catch (SQLException | NoSuchMethodException |
+                 InvocationTargetException | InstantiationException |
+                 IllegalAccessException | NoSuchFieldException e) {
+
             throw new AppException(null, e, getClass(), "mapResultSetToEntity");
         }
     }

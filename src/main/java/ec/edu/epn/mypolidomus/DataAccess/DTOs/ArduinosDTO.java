@@ -1,32 +1,38 @@
 package ec.edu.epn.mypolidomus.DataAccess.DTOs;
 
-public class UsuarioClienteDTO {
+public class ArduinosDTO {
 
-    private Integer IdUsuarioCliente;
+    private Integer IdArduinos;
+    private String Nombre;
     private String Descripcion;
     private String Estado;
     private String FechaCreacion;
     private String FechaModifica;
 
-    public UsuarioClienteDTO() {
+    public ArduinosDTO() {
     }
 
-    public UsuarioClienteDTO(String descripcion) {
-        this.IdUsuarioCliente = 0;
+    public ArduinosDTO(String nombre, String descripcion) {
+        this.IdArduinos = 0;
+        this.Nombre = nombre;
         this.Descripcion = descripcion;
         this.Estado = "A";
     }
 
-    public UsuarioClienteDTO(Integer idUsuarioCliente, String descripcion, String estado, String fechaCreacion, String fechaModifica) {
-        this.IdUsuarioCliente = idUsuarioCliente;
+    public ArduinosDTO(Integer idArduinos, String nombre, String descripcion, String estado, String fechaCreacion, String fechaModifica) {
+        this.IdArduinos = idArduinos;
+        this.Nombre = nombre;
         this.Descripcion = descripcion;
         this.Estado = estado;
         this.FechaCreacion = fechaCreacion;
         this.FechaModifica = fechaModifica;
     }
 
-    public Integer getIdUsuarioCliente() { return IdUsuarioCliente; }
-    public void setIdUsuarioCliente(Integer idUsuarioCliente) { IdUsuarioCliente = idUsuarioCliente; }
+    public Integer getIdArduinos() { return IdArduinos; }
+    public void setIdArduinos(Integer idArduinos) { IdArduinos = idArduinos; }
+
+    public String getNombre() { return Nombre; }
+    public void setNombre(String nombre) { Nombre = nombre; }
 
     public String getDescripcion() { return Descripcion; }
     public void setDescripcion(String descripcion) { Descripcion = descripcion; }
@@ -43,7 +49,8 @@ public class UsuarioClienteDTO {
     @Override
     public String toString() {
         return getClass().getName()
-        + "\n IdUsuarioCliente : " + getIdUsuarioCliente()
+        + "\n IdArduinos       : " + getIdArduinos()
+        + "\n Nombre           : " + getNombre()
         + "\n Descripcion      : " + getDescripcion()
         + "\n Estado           : " + getEstado()
         + "\n FechaCreacion    : " + getFechaCreacion()
