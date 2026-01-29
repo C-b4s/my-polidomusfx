@@ -5,6 +5,11 @@ import ec.edu.epn.mypolidomus.AppDomus.DesktopApp.CustomControl.MyLabel;
 import ec.edu.epn.mypolidomus.AppDomus.DesktopApp.CustomControl.MyLabelLink;
 import ec.edu.epn.mypolidomus.AppDomus.DesktopApp.CustomControl.MyPassBox;
 import ec.edu.epn.mypolidomus.AppDomus.DesktopApp.CustomControl.MyTextBox;
+import ec.edu.epn.mypolidomus.BusinessLogic.FactoryBL;
+import ec.edu.epn.mypolidomus.BusinessLogic.Entities.UsuarioClienteBL;
+import ec.edu.epn.mypolidomus.DataAccess.DAOs.UsuarioClienteDAO;
+import ec.edu.epn.mypolidomus.DataAccess.DTOs.UsuarioClienteDTO;
+import ec.edu.epn.mypolidomus.Infrastructure.AppException;
 import ec.edu.epn.mypolidomus.Infrastructure.AppStyle;
 import javafx.geometry.Pos;
 import javafx.scene.layout.VBox;
@@ -71,9 +76,18 @@ public class PLogin extends VBox {
     }
 
     private void onLogin() {
-        String user = txtUsuario.getText();
-        String pass = txtPassword.getText();
-
+        String claveUsuario = txtPassword.getText();
+        UsuarioClienteBL uBl = new UsuarioClienteBL();
+        try {
+            if (uBl.validar(claveUsuario)) {
+                System.out.println("Acceso concedido");
+                // Aquí envías la señal a Arduino para abrir la puerta
+            } else {
+                System.out.println("Acceso denegado");
+            }
+        } catch (AppException e) {
+        e.printStackTrace();
+    }
         // Aquí va tu lógica de autenticación
         System.out.println("Login: " + user);
     }
