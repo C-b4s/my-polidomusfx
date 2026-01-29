@@ -6,11 +6,11 @@ module ec.edu.epn.mypolidomus {
     requires java.desktop;
     requires javafx.graphics;  // opcional, recomendado
 
-    opens ec.edu.epn.mypolidomus
-        to javafx.fxml;
+    exports ec.edu.epn.mypolidomus;
 
-    opens ec.edu.epn.mypolidomus.DataAccess.Helpers
-        to javafx.base;
+    opens ec.edu.epn.mypolidomus to javafx.fxml;
+
+    opens ec.edu.epn.mypolidomus.DataAccess.Helpers to javafx.base;
 
 
 
