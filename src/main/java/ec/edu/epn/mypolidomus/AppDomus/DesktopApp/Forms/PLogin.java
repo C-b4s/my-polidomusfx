@@ -1,5 +1,9 @@
 package ec.edu.epn.mypolidomus.AppDomus.DesktopApp.Forms;
 
+import ec.edu.epn.mypolidomus.AppDomus.DesktopApp.CustomControl.MyButton;
+import ec.edu.epn.mypolidomus.AppDomus.DesktopApp.CustomControl.MyLabel;
+import ec.edu.epn.mypolidomus.AppDomus.DesktopApp.CustomControl.MyLabelLink;
+import ec.edu.epn.mypolidomus.AppDomus.DesktopApp.CustomControl.MyPassBox;
 import ec.edu.epn.mypolidomus.AppDomus.DesktopApp.CustomControl.MyTextBox;
 import ec.edu.epn.mypolidomus.Infrastructure.AppStyle;
 import javafx.geometry.Pos;
@@ -8,7 +12,7 @@ import javafx.scene.layout.VBox;
 public class PLogin extends VBox {
 
     private MyTextBox txtUsuario;
-    private MyTextBox txtPassword;
+    private MyPassBox txtPassword;
     private MyButton  btnLogin;
     private MyLabelLink lblForgot;
 
@@ -37,10 +41,8 @@ public class PLogin extends VBox {
 
         // ===== Contraseña =====
         MyLabel lblPassword = new MyLabel("Contraseña");
-        txtPassword = new MyTextBox();
+        txtPassword = new MyPassBox();
         txtPassword.setPromptText("Ingrese su contraseña");
-        txtPassword.setPasswordMode(true); // asumido en tu control
-
         // ===== Botón Login =====
         btnLogin = new MyButton("Ingresar");
         btnLogin.setBackground(AppStyle.createButtonBackground(AppStyle.COLOR_BUTTON_BG));

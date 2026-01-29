@@ -1,62 +1,86 @@
 package ec.edu.epn.mypolidomus.AppDomus.DesktopApp.Forms;
 
+import ec.edu.epn.mypolidomus.AppDomus.DesktopApp.CustomControl.MyButton;
+import ec.edu.epn.mypolidomus.Infrastructure.AppConfig;
+import javafx.geometry.Pos;
+import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 import java.util.ArrayList;
 import java.util.List;
 
-import ec.edu.epn.mypolidomus.AppDomus.DesktopApp.CustomControl.MyButton;
-import ec.edu.epn.mypolidomus.Infrastructure.AppConfig;
-import ec.edu.epn.mypolidomus.Infrastructure.AppStyle;
-import javafx.geometry.Pos;
-import javafx.scene.control.Label;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.Priority;
-import javafx.scene.image.Image;
-import javafx.scene.layout.VBox;
-
+// CORRECCIÓN: Ahora heredamos de VBox (JavaFX) en lugar de JPanel (Swing)
 public class AppMenu extends VBox {
+
     private final List<MyButton> menuItems = new ArrayList<>();
-    private final VBox buttonBox = new VBox(6); 
+    private final VBox buttonsPanel = new VBox(); // VBox interno para los botones
 
     public AppMenu() {
         initComponents();
     }
 
     private void initComponents() {
-
+        // ===== Configuración del Panel Principal =====
+        // Equivalente a setLayout(BoxLayout.Y_AXIS) y setPreferredSize
+        setSpacing(10); // Espacio entre elementos
+        setMinWidth(250);
         setPrefWidth(250);
-        setSpacing(10);
-        setPadding(AppStyle.createPadding());
-        setAlignment(Pos.TOP_CENTER);
+        setAlignment(Pos.TOP_CENTER); // Centrar contenido horizontalmente
         
-        // add-logo
-            ImageView logo = new ImageView(
-                new Image(AppConfig.getImgMain().toExternalForm())
-            );
-            logo.setFitHeight(100);
-            logo.setFitWidth(100);
-            logo.setPreserveRatio(true);
+        // Estilo de fondo (opcional, para que se vea bien)
+        setStyle("-fx-background-color: #2b2b2b;"); 
 
-        //Panel botones
-        buttonBox.setAlignment(Pos.TOP_LEFT);
+        // ===== Logo =====
+        try {
+            // En JavaFX usamos Image e ImageView en lugar de ImageIO y JLabel
+            // Nota: Asumo que AppConfig.getImgMain() devuelve un URL o Stream válido.
+            // Si devuelve un File, usa: new Image(AppConfig.getImgMain().toURI().toString());
+            
+            // Opción genérica (ajusta según qué devuelve getImgMain):
+            String imagePath = AppConfig.getImgMain().toString(); 
+            Image logoImage = new Image(imagePath, 100, 100, true, true);
+            ImageView logoView = new ImageView(logoImage);
+            
+            // Margen superior para el logo
+            VBox.setMargin(logoView, new javafx.geometry.Insets(20, 0, 10, 0));
+            getChildren().add(logoView);
 
-        VBox spacer = new VBox();
+        } catch (Exception e) {
+            e.printStackTrace();
+            // Fallback si no carga la imagen
+            getChildren().add(new Label("[LOGO]"));
+        }
+
+        // ===== Panel de Botones =====
+        buttonsPanel.setAlignment(Pos.TOP_CENTER);
+        buttonsPanel.setSpacing(5); // Espacio entre botones
+        getChildren().add(buttonsPanel);
+
+        // ===== Spacer (Glue) =====
+        // En JavaFX usamos un Region con VGrow para empujar el contenido hacia abajo
+        Region spacer = new Region();
         VBox.setVgrow(spacer, Priority.ALWAYS);
+        getChildren().add(spacer);
 
-            Label footer = new Label(" ──❰  ❱── © 2K26 MYPOLIDOMUS \"");
-            footer.setFont(AppStyle.FONT_SMALL);
-            footer.setTextFill(AppStyle.COLOR_FONT_LIGHT);
-
-            getChildren().addAll(
-                logo,
-                buttonBox,
-                spacer,
-                footer
-            );
-        }         
+        // ===== Copyright =====
+        Label lblCopyright = new Label(" ──❰ 💀 ❱── © 2K26 PATMIC ");
+        // Estilo simple para el label (blanco o gris para que se vea)
+        lblCopyright.setStyle("-fx-text-fill: #888888; -fx-font-size: 10px;");
+        lblCopyright.setPadding(new javafx.geometry.Insets(0, 0, 10, 0)); // Padding inferior
+        getChildren().add(lblCopyright);
+    }
 
     public void addMenuItem(MyButton button) {
         menuItems.add(button);
-        buttonBox.getChildren().add(button);
+        
+        // Configuración para que el botón llene el ancho si lo deseas
+        button.setMaxWidth(Double.MAX_VALUE);
+        VBox.setMargin(button, new javafx.geometry.Insets(0, 10, 0, 10)); // Márgenes laterales
+        
+        buttonsPanel.getChildren().add(button);
     }
 
     public List<MyButton> getMenuItems() {
