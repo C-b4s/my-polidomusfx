@@ -18,7 +18,7 @@ public class AppStart extends Application {
         root.setCenter(pnlMain);
 
         MyButton btnHome         = new MyButton("HOME");
-        MyButton btnTest             = new MyButton("Aaaaaaaa");
+        MyButton btnTest         = new MyButton("Aaaaaaaa");
 
         btnHome.setOnAction(e -> setPanel(new PHome(),root));
         btnTest.setOnAction(e -> AppMSG.showError("Mensaje de error"));
