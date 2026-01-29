@@ -11,7 +11,6 @@ public class MyPassBox extends PasswordField {
     }
 
     private void customizeComponent() {
-        // Usamos EXACTAMENTE el mismo estilo que en MyTextBox
         setFont(AppStyle.FONT);
         setStyle(
             "-fx-text-fill: " + AppStyle.COLOR_FONT_LIGHT + ";" +
