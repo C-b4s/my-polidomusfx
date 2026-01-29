@@ -35,11 +35,6 @@ public class AppMenu extends VBox {
 
         // ===== Logo =====
         try {
-            // En JavaFX usamos Image e ImageView en lugar de ImageIO y JLabel
-            // Nota: Asumo que AppConfig.getImgMain() devuelve un URL o Stream válido.
-            // Si devuelve un File, usa: new Image(AppConfig.getImgMain().toURI().toString());
-            
-            // Opción genérica (ajusta según qué devuelve getImgMain):
             String imagePath = AppConfig.getImgMain().toString(); 
             Image logoImage = new Image(imagePath, 100, 100, true, true);
             ImageView logoView = new ImageView(logoImage);
@@ -76,9 +71,8 @@ public class AppMenu extends VBox {
     public void addMenuItem(MyButton button) {
         menuItems.add(button);
         
-        // Configuración para que el botón llene el ancho si lo deseas
         button.setMaxWidth(Double.MAX_VALUE);
-        VBox.setMargin(button, new javafx.geometry.Insets(0, 10, 0, 10)); // Márgenes laterales
+        VBox.setMargin(button, new javafx.geometry.Insets(0, 10, 0, 10)); 
         
         buttonsPanel.getChildren().add(button);
     }
