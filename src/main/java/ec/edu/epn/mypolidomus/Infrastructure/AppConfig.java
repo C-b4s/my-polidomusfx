@@ -81,4 +81,10 @@ public abstract class AppConfig {
        ======================= */
     public static final String MSG_DEFAULT_ERROR  =
             "Ups! Error inesperado. Por favor, contacte al administrador del sistema.";
-}
+    
+    public static final String MSG_DEFAULT_CLASS  =
+            "Ups! Error inesperado. Por favor, contacte al administrador del sistema.";
+    
+    public static final String MSG_DEFAULT_METHOD  =
+            "Ups! Error inesperado. Por favor, contacte al administrador del sistema.";
+    }
