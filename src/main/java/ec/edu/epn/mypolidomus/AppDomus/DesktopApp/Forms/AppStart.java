@@ -17,13 +17,13 @@ public class AppStart extends Application {
         root.setLeft(pnlMenu);
         root.setCenter(pnlMain);
 
-        MyButton btnCualquiera = new MyButton("aaaaa");
+        MyButton btnHome         = new MyButton("HOME");
         MyButton btnTest             = new MyButton("Aaaaaaaa");
 
-        btnCualquiera.setOnAction(e -> setPanel(new PHome(),root));
+        btnHome.setOnAction(e -> setPanel(new PHome(),root));
         btnTest.setOnAction(e -> AppMSG.showError("Mensaje de error"));
 
-        pnlMenu.addMenuItem(btnCualquiera);
+        pnlMenu.addMenuItem(btnHome);
         pnlMenu.addMenuItem(btnTest);
 
         Scene scene = new Scene(root,930,600);
