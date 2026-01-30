@@ -5,6 +5,10 @@ import ec.edu.epn.mypolidomus.AppDomus.DesktopApp.CustomControl.MyLabel;
 import ec.edu.epn.mypolidomus.AppDomus.DesktopApp.CustomControl.MyLabelLink;
 import ec.edu.epn.mypolidomus.AppDomus.DesktopApp.CustomControl.MyPassBox;
 import ec.edu.epn.mypolidomus.AppDomus.DesktopApp.CustomControl.MyTextBox;
+import ec.edu.epn.mypolidomus.BusinessLogic.Entities.UsuarioBL;
+import ec.edu.epn.mypolidomus.BusinessLogic.Security.PasswordHasher;
+import ec.edu.epn.mypolidomus.BusinessLogic.Sistema.ArduinoConector;
+import ec.edu.epn.mypolidomus.Infrastructure.AppException;
 import ec.edu.epn.mypolidomus.Infrastructure.AppStyle;
 import javafx.geometry.Pos;
 import javafx.scene.layout.VBox;
@@ -16,12 +20,15 @@ public class PLogin extends VBox {
     private MyButton  btnLogin;
     private MyLabelLink lblForgot;
 
-    public PLogin() {
+    // Instancia de ArduinoConector
+    private final ArduinoConector arduino;
+
+    public PLogin(ArduinoConector arduinoConector) {
+        this.arduino = arduinoConector;
         initUI();
     }
 
     private void initUI() {
-
         // ===== Configuración del panel =====
         setSpacing(15);
         setAlignment(AppStyle.CENTER);
@@ -43,6 +50,7 @@ public class PLogin extends VBox {
         MyLabel lblPassword = new MyLabel("Contraseña");
         txtPassword = new MyPassBox();
         txtPassword.setPromptText("Ingrese su contraseña");
+
         // ===== Botón Login =====
         btnLogin = new MyButton("Ingresar");
         btnLogin.setBackground(AppStyle.createButtonBackground(AppStyle.COLOR_BUTTON_BG));
@@ -55,7 +63,13 @@ public class PLogin extends VBox {
         lblForgot.setAlignment(Pos.CENTER_RIGHT);
 
         // ===== Acciones =====
-        btnLogin.setOnAction(e -> onLogin());
+        btnLogin.setOnAction(e -> {
+            try {
+                onLogin();
+            } catch (AppException e1) {
+                e1.printStackTrace();
+            }
+        });
         lblForgot.setOnMouseClicked(e -> onForgotPassword());
 
         // ===== Agregar componentes =====
@@ -70,12 +84,43 @@ public class PLogin extends VBox {
         );
     }
 
-    private void onLogin() {
-        String user = txtUsuario.getText();
-        String pass = txtPassword.getText();
+    private void onLogin() throws AppException {
+        String usuario = txtUsuario.getText().trim();
+        String claveUsuario = txtPassword.getText();
 
-        // Aquí va tu lógica de autenticación
-        System.out.println("Login: " + user);
+        if (usuario.isEmpty() || claveUsuario.isEmpty()) {
+            System.out.println("Debe ingresar usuario y contraseña");
+            return;
+        }
+
+        UsuarioBL bl = new UsuarioBL();
+        try {
+            // Validamos usuario + contraseña
+            boolean accesoConcedido = bl.validar(PasswordHasher.hash(claveUsuario));
+
+            if (accesoConcedido) {
+                System.out.println("Acceso concedido");
+
+                // Enviar señal a Arduino para abrir la puerta
+                if (arduino != null && arduino.estaConectado()) {
+                    arduino.enviarAbrirPuerta();
+                    arduino.enviarBuzzerOff();
+                }
+
+            } else {
+                System.out.println("Usuario o contraseña incorrectos");
+
+                // Señal de acceso denegado en Arduino
+                if (arduino != null && arduino.estaConectado()) {
+                    arduino.enviarDenegado();
+                    arduino.enviarBuzzerOn();
+                }
+            }
+
+        } catch (AppException e) {
+            e.printStackTrace();
+            System.out.println("Error al validar el login");
+        }
     }
 
     private void onForgotPassword() {

@@ -1,10 +1,10 @@
 module ec.edu.epn.mypolidomus {
     requires javafx.controls;
     requires javafx.fxml;
-
-    requires java.sql;      
+    requires java.sql;
     requires java.desktop;
-    requires transitive javafx.graphics;  
+    requires transitive javafx.graphics;
+    requires com.fazecast.jSerialComm;
 
     opens ec.edu.epn.mypolidomus to javafx.fxml;
     opens ec.edu.epn.mypolidomus.Controllers to javafx.fxml;

@@ -13,3 +13,5 @@ logs/
 config.properties
 
 .vscode/my-polidomusfx/
+
+.pio
