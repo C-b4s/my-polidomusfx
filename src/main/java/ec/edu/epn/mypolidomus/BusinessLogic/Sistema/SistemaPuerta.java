@@ -40,7 +40,7 @@ public class SistemaPuerta {
         UsuarioClienteDAO usuarioDAO = new UsuarioClienteDAO();
         this.sensorProximidad = new SensorProximidad();
         this.tecladoHandler = new TecladoMatricialHandler(usuarioDAO);
-        this.arduinoConector = new ArduinoConector(sensorProximidad, tecladoHandler);
+        this.arduinoConector = new ArduinoConector();
         this.seguroPuerta = new SeguroPuerta(arduinoConector);
 
         this.inicializado = true;

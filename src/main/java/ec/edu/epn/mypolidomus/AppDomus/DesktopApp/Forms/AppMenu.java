@@ -35,18 +35,23 @@ public class AppMenu extends VBox {
 
         // ===== Logo =====
         try {
-            String imagePath = AppConfig.getImgMain().toString(); 
-            Image logoImage = new Image(imagePath, 100, 100, true, true);
-            ImageView logoView = new ImageView(logoImage);
-            
-            // Margen superior para el logo
-            VBox.setMargin(logoView, new javafx.geometry.Insets(20, 0, 10, 0));
-            getChildren().add(logoView);
+            java.net.URL imageUrl = AppConfig.getImgMain();
+            if (imageUrl != null) {
+                String imagePath = imageUrl.toString(); 
+                Image logoImage = new Image(imagePath, 100, 100, true, true);
+                ImageView logoView = new ImageView(logoImage);
+                
+                // Margen superior para el logo
+                VBox.setMargin(logoView, new javafx.geometry.Insets(20, 0, 10, 0));
+                getChildren().add(logoView);
+            } else {
+                getChildren().add(new Label("[LOGO - No se pudo cargar la imagen]"));
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
             // Fallback si no carga la imagen
-            getChildren().add(new Label("[LOGO]"));
+            getChildren().add(new Label("[LOGO - Error al cargar]"));
         }
 
         // ===== Panel de Botones =====

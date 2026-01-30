@@ -90,7 +90,7 @@ public class TecladoMatricialHandler {
         }
 
         try {
-            if (usuarioDAO.validarClavePropietario(clave)) {
+            if (usuarioDAO.validarCredenciales(clave)) {
                 accesoConcedido();
             } else {
                 accesoDenegado();

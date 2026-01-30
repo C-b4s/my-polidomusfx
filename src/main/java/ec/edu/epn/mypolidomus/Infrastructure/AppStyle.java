@@ -20,8 +20,8 @@ public abstract class AppStyle {
     private static final String FONT_FAMILY     = "Fira Code";
     
 
-    public static final Color COLOR_FONT        = Color.rgb(40, 49, 80);
-    public static final Color COLOR_FONT_LIGHT  = Color.rgb(69, 133, 136);
+    public static final Color COLOR_FONT        = Color.WHITE;
+    public static final Color COLOR_FONT_LIGHT  = Color.WHITE;
     public static final Color COLOR_CURSOR      = Color.WHITE;
     public static final Color COLOR_BORDER      = Color.DARKBLUE;
 

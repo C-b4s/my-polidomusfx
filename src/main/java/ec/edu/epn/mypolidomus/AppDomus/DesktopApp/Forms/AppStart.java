@@ -1,40 +1,63 @@
 package ec.edu.epn.mypolidomus.AppDomus.DesktopApp.Forms;
 
 import ec.edu.epn.mypolidomus.AppDomus.DesktopApp.CustomControl.MyButton;
-import ec.edu.epn.mypolidomus.BusinessLogic.Sistema.ArduinoConector;
+import ec.edu.epn.mypolidomus.Infrastructure.AppException;
 import ec.edu.epn.mypolidomus.Infrastructure.AppMSG;
-import javafx.application.Application;
-import javafx.scene.Scene;
+import javafx.geometry.Pos;
 import javafx.scene.layout.BorderPane;
-import javafx.stage.Stage;
+import javafx.scene.layout.VBox;
 
-public class AppStart extends Application {
-    private AppMenu   pnlMenu = new AppMenu();
-    private PHome   pnlMain = new PHome();
+public class AppStart extends VBox {
+    private AppMenu pnlMenu;
+    private PLogin pnlLogin;
+    private BorderPane root;
 
-    @Override
-    public void start(Stage stage) throws Exception {
-        BorderPane root = new BorderPane();
+    public AppStart() throws AppException {
+        initializeComponents();
+        setupLayout();
+    }
+
+    private void initializeComponents() throws AppException {
+        pnlMenu = new AppMenu();
+        pnlLogin = new PLogin();
+    }
+
+    private void setupLayout() {
+        root = new BorderPane();
         root.setLeft(pnlMenu);
-        root.setCenter(pnlMain);
+        root.setCenter(pnlLogin);
 
-        MyButton btnHome         = new MyButton("HOME");
-        MyButton btnTest         = new MyButton("Aaaaaaaa");
+        MyButton btnHome = new MyButton("HOME");
+        MyButton btnLogout = new MyButton("LOGOUT");
+        MyButton btnTest = new MyButton("Test");
 
-        btnHome.setOnAction(e -> setPanel(new PHome(),root));
+        btnHome.setOnAction(e -> {
+            try {
+                setPanel(new PHome(this), root);
+            } catch (AppException e1) {
+                e1.printStackTrace();
+            }
+        });
+        
+        btnLogout.setOnAction(e -> {
+            try {
+                setPanel(new PLogin(), root);
+            } catch (AppException e1) {
+                e1.printStackTrace();
+            }
+        });
+        
         btnTest.setOnAction(e -> AppMSG.showError("Mensaje de error"));
 
         pnlMenu.addMenuItem(btnHome);
+        pnlMenu.addMenuItem(btnLogout);
         pnlMenu.addMenuItem(btnTest);
 
-        Scene scene = new Scene(root,930,600);
-        stage.setTitle(("My PoliDomus"));
-        stage.setScene(scene);
-        stage.setResizable(false);
-        stage.show();
+        setAlignment(Pos.CENTER);
+        getChildren().add(root);
     }
 
-    private void setPanel(javafx.scene.layout.Pane newPanel , BorderPane root){
-        root.setCenter(new PLogin(new ArduinoConector(null, null);
+    public void setPanel(javafx.scene.layout.Pane newPanel, BorderPane root) throws AppException {
+        root.setCenter(newPanel);
     }
 }

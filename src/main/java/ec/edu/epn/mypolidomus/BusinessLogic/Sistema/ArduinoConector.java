@@ -1,6 +1,9 @@
 package ec.edu.epn.mypolidomus.BusinessLogic.Sistema;
 
 import com.fazecast.jSerialComm.SerialPort;
+
+import ec.edu.epn.mypolidomus.DataAccess.DAOs.UsuarioClienteDAO;
+import ec.edu.epn.mypolidomus.Infrastructure.AppException;
 import javafx.application.Platform;
 
 import java.io.BufferedReader;
@@ -25,15 +28,14 @@ public class ArduinoConector {
 
     private final SensorProximidad sensorProximidad;
     private final TecladoMatricialHandler tecladoHandler;
-
     private SerialPort port;
     private OutputStream output;
     private Thread readerThread;
     private final AtomicBoolean running = new AtomicBoolean(false);
 
-    public ArduinoConector(SensorProximidad sensorProximidad, TecladoMatricialHandler tecladoHandler) {
-        this.sensorProximidad = sensorProximidad;
-        this.tecladoHandler = tecladoHandler;
+    public ArduinoConector() throws AppException {
+        sensorProximidad = new SensorProximidad();
+        tecladoHandler = new TecladoMatricialHandler(new UsuarioClienteDAO());
         configurarListeners();
     }
 
