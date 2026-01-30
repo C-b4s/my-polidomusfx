@@ -1,51 +1,79 @@
 package ec.edu.epn.mypolidomus.BusinessLogic.Sistema;
 
+import ec.edu.epn.mypolidomus.DataAccess.DAOs.UsuarioClienteDAO;
 import ec.edu.epn.mypolidomus.Infrastructure.AppException;
 
+/**
+ * Maneja el teclado matricial 4×4 para verificación de PIN en sistema de seguridad con Arduino.
+ * Alineado con {@code arduino/code.cc}: teclas 0–9, *, #; PIN de 3–4 dígitos; * borra, # verifica.
+ * Compatible con protocolo Serial: Arduino envía {@code K&lt;tecla&gt;} (ej. K1, K*, K#).
+ */
 public class TecladoMatricialHandler {
 
-    private StringBuilder claveIngresada = new StringBuilder();
+    /** Longitud máxima del PIN (Arduino: 4; claveCorrecta puede ser 3). */
+    public static final int LONGITUD_PIN_MAX = 4;
+
+    /** Longitud mínima para aceptar verificación (ej. 3). */
+    public static final int LONGITUD_PIN_MIN = 3;
+
+    /** Prefijo Serial para tecla: {@code K} + tecla. */
+    public static final String PREFIJO_TECLA = "K";
+
+    private final StringBuilder claveIngresada = new StringBuilder();
     private boolean esperandoClave = false;
 
     private final UsuarioClienteDAO usuarioDAO;
+    private AccesoResultadoListener accesoResultadoListener;
 
-    // Usuario para verificar (puede venir de configuración o login previo)
-    private final String usuarioActual;
-
-    public TecladoMatricialHandler(UsuarioClienteDAO usuarioDAO, String usuarioActual) {
+    public TecladoMatricialHandler(UsuarioClienteDAO usuarioDAO) {
         this.usuarioDAO = usuarioDAO;
-        this.usuarioActual = usuarioActual;
+    }
+
+    public interface AccesoResultadoListener {
+        void onAccesoConcedido();
+        void onAccesoDenegado();
+    }
+
+    public void setAccesoResultadoListener(AccesoResultadoListener listener) {
+        this.accesoResultadoListener = listener;
     }
 
     /**
-     * Inicia la captura de la clave tras detectar movimiento.
+     * Inicia la captura de clave (p. ej. tras «persona cerca» o movimiento).
      */
     public void activarIngresoClave() {
         claveIngresada.setLength(0);
         esperandoClave = true;
-        // Aquí se puede integrar con LCD para mostrar "Ingrese clave"
-        System.out.println("MOVIMIENTO DETECTADO: Esperando clave...");
+        System.out.println("PROXIMIDAD/MOVIMIENTO: Esperando clave...");
     }
 
     /**
-     * Maneja la tecla presionada en el teclado matricial.
-     * @param tecla La tecla ingresada ('0'-'9', '*', '#')
+     * Procesa una línea {@code K&lt;tecla&gt;} del Arduino. Acepta 0–9, *, #, A–D (A–D se ignoran al construir PIN).
+     */
+    public boolean procesarLineaTecla(String linea) {
+        if (linea == null) return false;
+        String t = linea.trim();
+        if (!t.toUpperCase().startsWith(PREFIJO_TECLA) || t.length() != 2) return false;
+        manejarTecla(t.charAt(1));
+        return true;
+    }
+
+    /**
+     * Maneja una tecla: * borra, # verifica, 0–9 construyen el PIN (máx. {@value #LONGITUD_PIN_MAX}). A–D se ignoran.
      */
     public void manejarTecla(char tecla) {
         if (!esperandoClave) return;
 
         switch (tecla) {
-            case '*': // Reiniciar intento
+            case '*':
                 claveIngresada.setLength(0);
                 System.out.println("Clave borrada.");
                 break;
-
-            case '#': // Verificar clave
+            case '#':
                 verificarClave();
                 break;
-
-            default: // Construir la clave
-                if (claveIngresada.length() < 4) {
+            default:
+                if (tecla >= '0' && tecla <= '9' && claveIngresada.length() < LONGITUD_PIN_MAX) {
                     claveIngresada.append(tecla);
                     System.out.println("Clave parcial: " + "*".repeat(claveIngresada.length()));
                 }
@@ -53,52 +81,50 @@ public class TecladoMatricialHandler {
         }
     }
 
-    /**
-     * Verifica la clave ingresada contra la base de datos.
-     */
     private void verificarClave() {
-        try {
-            UsuarioClienteDTO usuario = usuarioDAO.readByUsuario(usuarioActual);
+        String clave = claveIngresada.toString();
+        if (clave.length() < LONGITUD_PIN_MIN) {
+            System.out.println("Clave demasiado corta. Mínimo " + LONGITUD_PIN_MIN + " dígitos.");
+            accesoDenegado();
+            return;
+        }
 
-            if (usuario != null && usuario.getContrasena().equals(claveIngresada.toString())) {
+        try {
+            if (usuarioDAO.validarClavePropietario(clave)) {
                 accesoConcedido();
             } else {
                 accesoDenegado();
             }
-
         } catch (AppException e) {
             System.err.println("Error al acceder a la base de datos: " + e.getMessage());
             accesoDenegado();
         }
     }
 
-    /**
-     * Acciones a realizar si la clave es correcta.
-     */
     private void accesoConcedido() {
         esperandoClave = false;
         claveIngresada.setLength(0);
-
         System.out.println("CLAVE CORRECTA: ACCESO CONCEDIDO");
-        // TODO: Integrar con servo, LCD y desactivar alarma
+        if (accesoResultadoListener != null) {
+            accesoResultadoListener.onAccesoConcedido();
+        }
     }
 
-    /**
-     * Acciones a realizar si la clave es incorrecta.
-     */
     private void accesoDenegado() {
         claveIngresada.setLength(0);
-        System.out.println("CLAVE INCORRECTA: CASA EN PELIGRO");
-        // TODO: Activar alarma, buzzer, notificaciones y LCD
+        System.out.println("CLAVE INCORRECTA");
+        if (accesoResultadoListener != null) {
+            accesoResultadoListener.onAccesoDenegado();
+        }
     }
 
-    /**
-     * Reinicia el sistema para un nuevo intento.
-     */
     public void reiniciarSistema() {
         esperandoClave = false;
         claveIngresada.setLength(0);
         System.out.println("Sistema listo para nuevo intento.");
-        // TODO: Resetear LCD y buzzer
+    }
+
+    public boolean isEsperandoClave() {
+        return esperandoClave;
     }
 }

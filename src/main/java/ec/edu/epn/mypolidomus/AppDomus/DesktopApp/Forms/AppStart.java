@@ -1,6 +1,7 @@
 package ec.edu.epn.mypolidomus.AppDomus.DesktopApp.Forms;
 
 import ec.edu.epn.mypolidomus.AppDomus.DesktopApp.CustomControl.MyButton;
+import ec.edu.epn.mypolidomus.BusinessLogic.Sistema.ArduinoConector;
 import ec.edu.epn.mypolidomus.Infrastructure.AppMSG;
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -34,6 +35,6 @@ public class AppStart extends Application {
     }
 
     private void setPanel(javafx.scene.layout.Pane newPanel , BorderPane root){
-        root.setCenter(newPanel);
+        root.setCenter(new PLogin(new ArduinoConector(null, null);
     }
 }

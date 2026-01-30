@@ -13,24 +13,6 @@ public class UsuarioClienteDAO extends DataHelperSQLiteDAO<UsuarioClienteDTO> {
         super(UsuarioClienteDTO.class, "UsuarioCliente", "IdUsuarioCliente");
     }
 
-    public boolean validarClavePropietario(String claveIngresada) throws AppException {
-        String sql = "SELECT Contrasena FROM " + tableName +
-                     " WHERE IdUsuarioTipo = ? AND Estado = 'A'";
-
-        try (PreparedStatement stmt = openConnection().prepareStatement(sql)) {
-            stmt.setInt(1, 2); // 2 = Tipo "Cliente/Propietario"
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    String claveBD = rs.getString("Contrasena");
-                    // Compara directamente, si quieres hashing aquí se hace igual
-                    return claveBD.equals(claveIngresada);
-                } else {
-                    return false;
-                }
-            }
-        } catch (SQLException e) {
-            throw new AppException("Error al validar clave", e, getClass(), "validarClavePropietario");
-        }
-    }
+   
     
 }

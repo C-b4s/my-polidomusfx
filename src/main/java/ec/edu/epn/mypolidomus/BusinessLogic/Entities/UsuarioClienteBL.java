@@ -33,9 +33,4 @@ public class UsuarioClienteBL {
     public boolean del(Integer id) throws AppException {
         return uDao.delete(id);
     }
-
-    public boolean validar(String clave) throws AppException{
-        return uDao.validarClavePropietario(clave);
-
-    }
 }   

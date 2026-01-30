@@ -106,13 +106,13 @@ INSERT INTO UsuarioTipo (Nombre, Descripcion) VALUES
  ('Tecnico', 'Realiza servicios');
 
 INSERT INTO Usuario (IdUsuarioTipo, IdEstado, Nombre, Correo, Contrasena) 
-VALUES (2, 1, 'Juan Perez', 'juan@gmail.com', 'hash123');
+VALUES (2, 1, 'Juan Perez', 'juan@gmail.com', '123');
 
 INSERT INTO UsuarioCliente (IdUsuario, Direccion)
 VALUES ((SELECT IdUsuario FROM Usuario WHERE Correo='juan@gmail.com'), 'Av. Amazonas');
 
 INSERT INTO Usuario (IdUsuarioTipo, IdEstado, Nombre, Correo, Contrasena) 
-VALUES (2, 1, 'Maria Lopez', 'maria@polidomus.com', 'hash456');
+VALUES (2, 1, 'Maria Lopez', 'maria@polidomus.com', '456');
 
 INSERT INTO UsuarioTecnico (IdUsuario, Descripcion)
 VALUES ((SELECT IdUsuario FROM Usuario WHERE Correo='maria@polidomus.com'), 'Tecnico Senior');
