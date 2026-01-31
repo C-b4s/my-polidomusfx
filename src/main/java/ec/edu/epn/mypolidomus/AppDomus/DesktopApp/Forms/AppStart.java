@@ -1,6 +1,7 @@
 package ec.edu.epn.mypolidomus.AppDomus.DesktopApp.Forms;
 
 import ec.edu.epn.mypolidomus.AppDomus.DesktopApp.CustomControl.MyButton;
+import ec.edu.epn.mypolidomus.DataAccess.DTOs.UsuarioDTO;
 import ec.edu.epn.mypolidomus.Infrastructure.AppException;
 import ec.edu.epn.mypolidomus.Infrastructure.AppMSG;
 import javafx.geometry.Pos;
@@ -11,6 +12,7 @@ public class AppStart extends VBox {
     private AppMenu pnlMenu;
     private PLogin pnlLogin;
     private BorderPane root;
+    private UsuarioDTO currentUser;
 
     public AppStart() throws AppException {
         initializeComponents();
@@ -19,7 +21,7 @@ public class AppStart extends VBox {
 
     private void initializeComponents() throws AppException {
         pnlMenu = new AppMenu();
-        pnlLogin = new PLogin();
+        pnlLogin = new PLogin(this);
     }
 
     private void setupLayout() {
@@ -33,7 +35,7 @@ public class AppStart extends VBox {
 
         btnHome.setOnAction(e -> {
             try {
-                setPanel(new PHome(this), root);
+                setPanel(new PHome(this, getCurrentUser()), root);
             } catch (AppException e1) {
                 e1.printStackTrace();
             }
@@ -41,7 +43,7 @@ public class AppStart extends VBox {
         
         btnLogout.setOnAction(e -> {
             try {
-                setPanel(new PLogin(), root);
+                setPanel(new PLogin(this), root);
             } catch (AppException e1) {
                 e1.printStackTrace();
             }
@@ -59,5 +61,17 @@ public class AppStart extends VBox {
 
     public void setPanel(javafx.scene.layout.Pane newPanel, BorderPane root) throws AppException {
         root.setCenter(newPanel);
+    }
+
+    public BorderPane getRoot() {
+        return root;
+    }
+
+    public UsuarioDTO getCurrentUser() {
+        return currentUser;
+    }
+
+    public void setCurrentUser(UsuarioDTO usuario) {
+        this.currentUser = usuario;
     }
 }

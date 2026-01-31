@@ -1,4 +1,4 @@
--- database: ../Databases/Polidomus.sqlite
+-- database: ../Databases/polidomus.sqlite
 PRAGMA foreign_keys = OFF;
 
 DROP VIEW IF EXISTS vwUsuarioDetalle;
@@ -7,6 +7,10 @@ DROP TABLE IF EXISTS Arduinos;
 DROP TABLE IF EXISTS Usuario;
 DROP TABLE IF EXISTS UsuarioTipo;
 DROP TABLE IF EXISTS Estado;
+
+DROP TABLE IF EXISTS UsuarioCliente;
+
+DROP TABLE IF EXISTS UsuarioTecnico;
 
 
 CREATE TABLE Estado (

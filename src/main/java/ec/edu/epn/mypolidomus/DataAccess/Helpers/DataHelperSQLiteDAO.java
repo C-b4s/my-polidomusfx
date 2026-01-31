@@ -273,17 +273,44 @@ public class DataHelperSQLiteDAO<T> implements IDAO<T> {
                 String column = meta.getColumnLabel(i);
                 Object value = rs.getObject(i);
 
-                Field field = DTOClass.getDeclaredField(column);
+                Field field = findField(DTOClass, column);
+                if (field == null) continue;
                 field.setAccessible(true);
+                value = convertValueForField(value, field.getType());
                 assignValue(field, instance, value);
             }
             return instance;
 
         } catch (SQLException | NoSuchMethodException |
                  InvocationTargetException | InstantiationException |
-                 IllegalAccessException | NoSuchFieldException e) {
+                 IllegalAccessException e) {
 
             throw new AppException(null, e, getClass(), "mapResultSetToEntity");
         }
+    }
+
+    /** Busca el campo por nombre (exacto o ignorando mayúsculas). */
+    private static Field findField(Class<?> dtoClass, String columnName) {
+        try {
+            return dtoClass.getDeclaredField(columnName);
+        } catch (NoSuchFieldException e) {
+            for (Field f : dtoClass.getDeclaredFields()) {
+                if (f.getName().equalsIgnoreCase(columnName)) return f;
+            }
+            return null;
+        }
+    }
+
+    /** Convierte valores de SQLite JDBC al tipo del campo (ej. Long → Integer). */
+    private static Object convertValueForField(Object value, Class<?> fieldType) {
+        if (value == null) return null;
+        if (fieldType == Integer.class || fieldType == int.class) {
+            if (value instanceof Long) return ((Long) value).intValue();
+            if (value instanceof Number) return ((Number) value).intValue();
+        }
+        if (fieldType == Long.class || fieldType == long.class) {
+            if (value instanceof Number) return ((Number) value).longValue();
+        }
+        return value;
     }
 }
