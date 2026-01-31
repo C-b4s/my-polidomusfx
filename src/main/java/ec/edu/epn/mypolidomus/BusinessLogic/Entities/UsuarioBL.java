@@ -33,7 +33,7 @@ public class UsuarioBL {
         return uDao.delete(id);
     }
 
-    public boolean validar(String nombre) throws AppException{
-        return uDao.validarClavePropietario(nombre);
+    public boolean validarCredenciales(String contrasenia) throws AppException {
+        return uDao.validarCredenciales(contrasenia);
     }
 }

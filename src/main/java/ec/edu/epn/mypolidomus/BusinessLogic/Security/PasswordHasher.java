@@ -18,4 +18,13 @@ public class PasswordHasher {
             throw new RuntimeException("Error al hashear contraseña", e);
         }
     }
+
+    public static boolean verify(String password, String hash) {
+        try {
+            String hashIngresado = hash(password);
+            return hashIngresado.equals(hash);
+        } catch (Exception e) {
+            throw new RuntimeException("Error al verificar contraseña", e);
+        }
+    }
 }

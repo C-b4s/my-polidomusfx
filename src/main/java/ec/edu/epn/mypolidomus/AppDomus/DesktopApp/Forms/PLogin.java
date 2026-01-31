@@ -6,10 +6,11 @@ import ec.edu.epn.mypolidomus.AppDomus.DesktopApp.CustomControl.MyLabelLink;
 import ec.edu.epn.mypolidomus.AppDomus.DesktopApp.CustomControl.MyPassBox;
 import ec.edu.epn.mypolidomus.AppDomus.DesktopApp.CustomControl.MyTextBox;
 import ec.edu.epn.mypolidomus.BusinessLogic.Entities.UsuarioBL;
-import ec.edu.epn.mypolidomus.BusinessLogic.Security.PasswordHasher;
 import ec.edu.epn.mypolidomus.BusinessLogic.Sistema.ArduinoConector;
 import ec.edu.epn.mypolidomus.Infrastructure.AppException;
 import ec.edu.epn.mypolidomus.Infrastructure.AppStyle;
+import ec.edu.epn.mypolidomus.Infrastructure.Tools.CMD;
+import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.layout.VBox;
 
@@ -20,12 +21,32 @@ public class PLogin extends VBox {
     private MyButton  btnLogin;
     private MyLabelLink lblForgot;
 
-    // Instancia de ArduinoConector
-    private final ArduinoConector arduino;
+    // Instancia de ArduinoConector (inicializada en hilo separado)
+    private ArduinoConector arduino;
 
-    public PLogin(ArduinoConector arduinoConector) {
-        this.arduino = arduinoConector;
+    public PLogin() {
         initUI();
+        // Inicializar Arduino en un hilo separado para no bloquear la UI
+        initializeArduinoAsync();
+    }
+
+    private void initializeArduinoAsync() {
+        Thread arduinoThread = new Thread(() -> {
+            try {
+                CMD.println("PLogin ❱❱ Inicializando Arduino en hilo separado...");
+                arduino = new ArduinoConector();
+                CMD.println("PLogin ❱❱ Arduino inicializado correctamente");
+            } catch (AppException e) {
+                CMD.printlnError("PLogin ❱❱ Error al inicializar Arduino: " + e.getMessage());
+                Platform.runLater(() -> {
+                    // Mostrar advertencia pero permitir que la UI continúe
+                    CMD.printlnError("Arduino no disponible - modo offline");
+                });
+            }
+        });
+        arduinoThread.setDaemon(true);
+        arduinoThread.setName("ArduinoInitThread");
+        arduinoThread.start();
     }
 
     private void initUI() {
@@ -96,12 +117,12 @@ public class PLogin extends VBox {
         UsuarioBL bl = new UsuarioBL();
         try {
             // Validamos usuario + contraseña
-            boolean accesoConcedido = bl.validar(PasswordHasher.hash(claveUsuario));
+            boolean accesoConcedido = bl.validarCredenciales(claveUsuario);
 
             if (accesoConcedido) {
                 System.out.println("Acceso concedido");
 
-                // Enviar señal a Arduino para abrir la puerta
+                // Enviar señal a Arduino para abrir la puerta (si está disponible)
                 if (arduino != null && arduino.estaConectado()) {
                     arduino.enviarAbrirPuerta();
                     arduino.enviarBuzzerOff();
@@ -110,7 +131,7 @@ public class PLogin extends VBox {
             } else {
                 System.out.println("Usuario o contraseña incorrectos");
 
-                // Señal de acceso denegado en Arduino
+                // Señal de acceso denegado en Arduino (si está disponible)
                 if (arduino != null && arduino.estaConectado()) {
                     arduino.enviarDenegado();
                     arduino.enviarBuzzerOn();

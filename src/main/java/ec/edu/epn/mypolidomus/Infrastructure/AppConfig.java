@@ -20,7 +20,7 @@ public abstract class AppConfig {
     private static final String KEY_FILE_ANTFOOD   = "df.AntFood";
 
     private static final String KEY_RES_IMG_MAIN   = "res.img.Main";
-    private static final String KEY_RES_IMG_LOGO   = "res.img.logo";
+    private static final String KEY_RES_IMG_LOGO   = "res.img.Logo";
     private static final String KEY_RES_IMG_SPLASH = "res.img.Splash";
 
     /* =======================
@@ -28,9 +28,8 @@ public abstract class AppConfig {
        ======================= */
     static {
         try (InputStream is =
-                AppConfig.class
-                        .getClassLoader()
-                        .getResourceAsStream(APP_PROPERTIES)) {
+    AppConfig.class.getResourceAsStream("/ec/edu/epn/mypolidomus/app.properties");
+) {
 
             if (is == null)
                 throw new RuntimeException("No se encontró app.properties");
@@ -73,7 +72,32 @@ public abstract class AppConfig {
 
     private static URL getResource(String key) {
         String path = get(key);
-        return path == null ? null : AppConfig.class.getResource(path);
+        if (path == null) return null;
+        
+        try {
+            // Intentar primero con el ClassLoader del thread actual
+            URL resource = Thread.currentThread().getContextClassLoader().getResource(path);
+            
+            // Si no funciona, intentar con AppConfig.class.getResource
+            if (resource == null) {
+                // Agregar / al inicio si no lo tiene
+                if (!path.startsWith("/")) {
+                    resource = AppConfig.class.getResource("/" + path);
+                } else {
+                    resource = AppConfig.class.getResource(path);
+                }
+            }
+            
+            if (resource == null) {
+                CMD.printlnError("AppConfig ❱❱ Recurso no encontrado: " + path);
+            } else {
+                CMD.println("AppConfig ❱❱ Recurso cargado: " + path);
+            }
+            return resource;
+        } catch (Exception e) {
+            CMD.printlnError("AppConfig ❱❱ Error al cargar recurso " + path + ": " + e.getMessage());
+            return null;
+        }
     }
 
     /* =======================
