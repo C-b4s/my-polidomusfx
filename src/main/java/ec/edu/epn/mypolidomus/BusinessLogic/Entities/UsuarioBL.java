@@ -36,4 +36,9 @@ public class UsuarioBL {
     public boolean validarCredenciales(String contrasenia) throws AppException {
         return uDao.validarCredenciales(contrasenia);
     }
+
+    /** Valida correo y contraseña; devuelve el UsuarioDTO si son correctos, null si no. */
+    public UsuarioDTO validarCredencialesPorCorreo(String correo, String contrasenia) throws AppException {
+        return uDao.validarCredencialesPorCorreo(correo, contrasenia);
+    }
 }

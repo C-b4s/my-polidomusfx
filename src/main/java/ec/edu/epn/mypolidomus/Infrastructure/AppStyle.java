@@ -43,7 +43,16 @@ public abstract class AppStyle {
     
 
     private AppStyle() {}
-    
+
+    /** Convierte un Color de JavaFX a formato CSS hex (#rrggbb) para usar en -fx-text-fill, etc. */
+    public static String toCssColor(Color color) {
+        if (color == null) return "#000000";
+        int r = (int) Math.round(color.getRed() * 255);
+        int g = (int) Math.round(color.getGreen() * 255);
+        int b = (int) Math.round(color.getBlue() * 255);
+        return String.format("#%02x%02x%02x", r, g, b);
+    }
+
     public static Background createButtonBackground(Color color) {
         return new Background(
             new BackgroundFill(

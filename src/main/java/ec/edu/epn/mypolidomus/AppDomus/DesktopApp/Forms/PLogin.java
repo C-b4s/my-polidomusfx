@@ -7,8 +7,11 @@ import ec.edu.epn.mypolidomus.AppDomus.DesktopApp.CustomControl.MyPassBox;
 import ec.edu.epn.mypolidomus.AppDomus.DesktopApp.CustomControl.MyTextBox;
 import ec.edu.epn.mypolidomus.BusinessLogic.Entities.UsuarioBL;
 import ec.edu.epn.mypolidomus.BusinessLogic.Sistema.ArduinoConector;
+import ec.edu.epn.mypolidomus.DataAccess.DTOs.UsuarioDTO;
 import ec.edu.epn.mypolidomus.Infrastructure.AppException;
+import ec.edu.epn.mypolidomus.Infrastructure.AppMSG;
 import ec.edu.epn.mypolidomus.Infrastructure.AppStyle;
+import ec.edu.epn.mypolidomus.Infrastructure.HistorialAccesosService;
 import ec.edu.epn.mypolidomus.Infrastructure.Tools.CMD;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
@@ -16,17 +19,17 @@ import javafx.scene.layout.VBox;
 
 public class PLogin extends VBox {
 
-    private MyTextBox txtUsuario;
+    private MyTextBox txtCorreo;
     private MyPassBox txtPassword;
     private MyButton  btnLogin;
     private MyLabelLink lblForgot;
 
-    // Instancia de ArduinoConector (inicializada en hilo separado)
+    private final AppStart appStart;
     private ArduinoConector arduino;
 
-    public PLogin() {
+    public PLogin(AppStart appStart) {
+        this.appStart = appStart;
         initUI();
-        // Inicializar Arduino en un hilo separado para no bloquear la UI
         initializeArduinoAsync();
     }
 
@@ -62,10 +65,10 @@ public class PLogin extends VBox {
         lblTitle.setFont(AppStyle.FONT_BOLD);
         lblTitle.setTextFill(AppStyle.COLOR_FONT);
 
-        // ===== Usuario =====
-        MyLabel lblUsuario = new MyLabel("Usuario");
-        txtUsuario = new MyTextBox();
-        txtUsuario.setPromptText("Ingrese su usuario");
+        // ===== Correo =====
+        MyLabel lblCorreo = new MyLabel("Correo");
+        txtCorreo = new MyTextBox();
+        txtCorreo.setPromptText("Ingrese su correo");
 
         // ===== Contraseña =====
         MyLabel lblPassword = new MyLabel("Contraseña");
@@ -93,11 +96,10 @@ public class PLogin extends VBox {
         });
         lblForgot.setOnMouseClicked(e -> onForgotPassword());
 
-        // ===== Agregar componentes =====
         getChildren().addAll(
                 lblTitle,
-                lblUsuario,
-                txtUsuario,
+                lblCorreo,
+                txtCorreo,
                 lblPassword,
                 txtPassword,
                 btnLogin,
@@ -106,41 +108,37 @@ public class PLogin extends VBox {
     }
 
     private void onLogin() throws AppException {
-        String usuario = txtUsuario.getText().trim();
-        String claveUsuario = txtPassword.getText();
+        String correo = txtCorreo.getText().trim();
+        String clave = txtPassword.getText();
 
-        if (usuario.isEmpty() || claveUsuario.isEmpty()) {
-            System.out.println("Debe ingresar usuario y contraseña");
+        if (correo.isEmpty() || clave.isEmpty()) {
+            AppMSG.show("Debe ingresar correo y contraseña");
             return;
         }
 
         UsuarioBL bl = new UsuarioBL();
         try {
-            // Validamos usuario + contraseña
-            boolean accesoConcedido = bl.validarCredenciales(claveUsuario);
+            UsuarioDTO usuario = bl.validarCredencialesPorCorreo(correo, clave);
 
-            if (accesoConcedido) {
-                System.out.println("Acceso concedido");
-
-                // Enviar señal a Arduino para abrir la puerta (si está disponible)
+            if (usuario != null) {
+                HistorialAccesosService.registrarAcceso(true);
                 if (arduino != null && arduino.estaConectado()) {
                     arduino.enviarAbrirPuerta();
                     arduino.enviarBuzzerOff();
                 }
-
+                appStart.setCurrentUser(usuario);
+                appStart.setPanel(new PHome(appStart, usuario), appStart.getRoot());
             } else {
-                System.out.println("Usuario o contraseña incorrectos");
-
-                // Señal de acceso denegado en Arduino (si está disponible)
+                HistorialAccesosService.registrarAcceso(false);
                 if (arduino != null && arduino.estaConectado()) {
                     arduino.enviarDenegado();
                     arduino.enviarBuzzerOn();
                 }
+                AppMSG.showError("Correo o contraseña incorrectos");
             }
-
         } catch (AppException e) {
-            e.printStackTrace();
-            System.out.println("Error al validar el login");
+            HistorialAccesosService.registrarAcceso(false);
+            AppMSG.showError("Error al validar: " + e.getMessage());
         }
     }
 

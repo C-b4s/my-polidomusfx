@@ -1,5 +1,6 @@
 package ec.edu.epn.mypolidomus.Infrastructure;
 
+import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Properties;
@@ -15,6 +16,7 @@ public abstract class AppConfig {
 
     private static final String KEY_DB_NAME        = "db.File";
     private static final String KEY_FILE_LOG       = "df.logFile";
+    private static final String KEY_FILE_HISTORIAL_ACCESOS = "df.historialAccesos";
     private static final String KEY_FILE_DATA      = "df.AntCoor";
     private static final String KEY_FILE_ANTNEST   = "df.AntNest";
     private static final String KEY_FILE_ANTFOOD   = "df.AntFood";
@@ -47,8 +49,22 @@ public abstract class AppConfig {
     /* =======================
        GETTERS DE CONFIG
        ======================= */
-    public static String getDATABASE() { return get(KEY_DB_NAME); }
+    /** Ruta JDBC de la base de datos. Si es relativa, se resuelve respecto a user.dir para encontrar polidomus.sqlite. */
+    public static String getDATABASE() {
+        String value = get(KEY_DB_NAME);
+        if (value == null || !value.startsWith("jdbc:sqlite:")) return value;
+        String path = value.substring("jdbc:sqlite:".length()).trim();
+        File f = new File(path);
+        if (!f.isAbsolute()) {
+            String base = System.getProperty("user.dir");
+            f = new File(base, path);
+            String abs = f.getAbsolutePath();
+            value = "jdbc:sqlite:" + abs;
+        }
+        return value;
+    }
     public static String getLOGFILE()  { return get(KEY_FILE_LOG); }
+    public static String getHistorialAccesosPath() { return get(KEY_FILE_HISTORIAL_ACCESOS); }
     public static String getDATAFILE() { return get(KEY_FILE_DATA); }
     public static String getANTFOOD()  { return get(KEY_FILE_ANTFOOD); }
     public static String getANTNEST()  { return get(KEY_FILE_ANTNEST); }

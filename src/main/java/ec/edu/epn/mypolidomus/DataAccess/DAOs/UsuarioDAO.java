@@ -21,7 +21,6 @@ public class UsuarioDAO extends DataHelperSQLiteDAO<UsuarioDTO> {
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     String contrasenaHashBD = rs.getString("Contrasena");
-                    // Compara usando el hash con PasswordHasher.verify()
                     return PasswordHasher.verify(contraseniaIngresada, contrasenaHashBD);
                 } else {
                     return false;
@@ -30,5 +29,27 @@ public class UsuarioDAO extends DataHelperSQLiteDAO<UsuarioDTO> {
         } catch (SQLException e) {
             throw new AppException("Error al validar credenciales", e, getClass(), "validarCredenciales");
         }
+    }
+
+    /** Busca un usuario activo por correo. */
+    public UsuarioDTO readByCorreo(String correo) throws AppException {
+        if (correo == null || correo.isBlank()) return null;
+        String sql = "SELECT * FROM " + tableName + " WHERE Correo = ? AND Estado = 'A' LIMIT 1";
+        try (PreparedStatement stmt = openConnection().prepareStatement(sql)) {
+            stmt.setString(1, correo.trim());
+            try (ResultSet rs = stmt.executeQuery()) {
+                return rs.next() ? mapResultSetToEntity(rs) : null;
+            }
+        } catch (SQLException e) {
+            throw new AppException("Error al buscar usuario por correo", e, getClass(), "readByCorreo");
+        }
+    }
+
+    /** Valida correo y contraseña; devuelve el UsuarioDTO si son correctos, null si no. */
+    public UsuarioDTO validarCredencialesPorCorreo(String correo, String contrasenia) throws AppException {
+        UsuarioDTO u = readByCorreo(correo);
+        if (u == null) return null;
+        if (contrasenia == null || contrasenia.isEmpty()) return null;
+        return PasswordHasher.verify(contrasenia, u.getContrasena()) ? u : null;
     }
 }
